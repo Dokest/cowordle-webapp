@@ -5,12 +5,14 @@
 <header
 	class="mt-10 flex items-center justify-center text-[40px] font-semibold text-white cursor-default"
 >
-	<span class="hover:text-orange-500 transition-colors">W</span>
-	<span class="hover:text-orange-500 transition-colors">o</span>
-	<span class="hover:text-orange-500 transition-colors">r</span>
-	<span class="hover:text-orange-500 transition-colors">d</span>
-	<span class="hover:text-orange-500 transition-colors">l</span>
-	<span class="hover:text-orange-500 transition-colors">e</span>
+	<span class="titleLetter">C</span>
+	<span class="titleLetter">o</span>
+	<span class="titleLetter">W</span>
+	<span class="titleLetter">o</span>
+	<span class="titleLetter">r</span>
+	<span class="titleLetter">d</span>
+	<span class="titleLetter">l</span>
+	<span class="titleLetter">e</span>
 </header>
 
 <main class="text-white">
@@ -24,3 +26,8 @@
 	<a href="#">FAQ</a>
 	<a href="#">Settings</a>
 </footer> -->
+<style>
+	.titleLetter {
+		@apply hover:text-orange-500 transition-colors hover:-translate-y-2 transition-transform;
+	}
+</style>

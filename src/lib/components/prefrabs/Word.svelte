@@ -12,7 +12,7 @@
 	}
 </script>
 
-<div class="w-fit flex gap-x-1 group cursor-pointer">
+<div class="w-fit flex gap-x-1 group cursor-pointer select-none">
 	{#each letters as letter}
 		<Letter char={letter} class="group-hover:border-orange-500" />
 	{/each}

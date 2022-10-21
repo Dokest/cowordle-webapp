@@ -11,6 +11,14 @@ const config = {
 
   kit: {
     adapter: adapter(),
+    alias: {
+      "$components/*": "./src/lib/components/*",
+      "$stores/*": "./src/lib/stores/*",
+      "$templates/*": "./src/lib/templates/*",
+      "$utils/*": "./src/lib/utils/*",
+      "$types/*": "./src/types/*",
+      "$styles/*": "./src/styles/*",
+    },
   },
 };
 

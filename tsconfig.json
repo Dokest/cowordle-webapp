@@ -11,10 +11,12 @@
     "strict": true,
     "baseUrl": "src",
     "paths": {
+      "$lib": ["src/lib"],
+      "$lib/*": ["src/lib/*"],
       "$components/*": ["lib/components/*"],
       "$stores/*": ["lib/stores/*"],
       "$templates/*": ["lib/templates/*"],
-      "$util/*s": ["lib/utils/*"],
+      "$utils/*": ["lib/utils/*"],
       "$types/*": ["types/*"],
       "$styles/*": ["styles/*"]
     }

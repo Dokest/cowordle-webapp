@@ -3,7 +3,7 @@
 </script>
 
 <header
-	class="mt-10 flex items-center justify-center text-[40px] font-semibold text-white cursor-default"
+	class="mt-10 flex items-center justify-center text-[40px] font-semibold text-white cursor-default select-none"
 >
 	<span class="titleLetter">C</span>
 	<span class="titleLetter">o</span>
@@ -28,6 +28,43 @@
 </footer> -->
 <style>
 	.titleLetter {
-		@apply hover:text-orange-500 transition-colors hover:-translate-y-2 transition-transform;
+		@apply hover:text-orange-500 transition-colors hover:-translate-y-1 transition-transform;
+		_animation-name: appear;
+		animation-duration: 500ms;
+		animation-timing-function: ease-in-out;
+		animation-fill-mode: forwards;
+	}
+
+	.titleLetter:nth-child(2) {
+		animation-delay: 0.1s;
+	}
+	.titleLetter:nth-child(3) {
+		animation-delay: 0.2s;
+	}
+	.titleLetter:nth-child(4) {
+		animation-delay: 0.3s;
+	}
+	.titleLetter:nth-child(5) {
+		animation-delay: 0.4s;
+	}
+	.titleLetter:nth-child(6) {
+		animation-delay: 0.5s;
+	}
+	.titleLetter:nth-child(7) {
+		animation-delay: 0.6s;
+	}
+	.titleLetter:nth-child(8) {
+		animation-delay: 0.7s;
+	}
+
+	@keyframes appear {
+		from {
+			opacity: 0;
+			transform: translateY(-20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 </style>

@@ -4,13 +4,15 @@
 	import Word from './Word.svelte';
 
 	async function host(): Promise<void> {
-		const { data, error } = await apiRequest<{ partyCode: string }>('/create', {
+		const { data, error } = await apiRequest<{ roomCode: string }>('/create', {
 			method: 'POST',
 		});
 
+		console.log(2, data);
+
 		if (data) {
-			const { partyCode } = data;
-			goto(`/party/${partyCode}`);
+			const { roomCode } = data;
+			goto(`/room/${roomCode}`);
 		}
 	}
 </script>

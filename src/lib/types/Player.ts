@@ -1,6 +1,8 @@
 
 export class Player {
+	uuid = '';
+
 	constructor(
-		readonly name: string,
+		public name: string,
 	) { }
 }

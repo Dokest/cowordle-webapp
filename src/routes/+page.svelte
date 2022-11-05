@@ -1,23 +1,17 @@
 <script lang="ts">
 	import LoadingParty from '$components/prefrabs/LoadingParty.svelte';
 	import MainMenu from '$components/prefrabs/MainMenu.svelte';
-	import { ws } from '$lib/ws/websockets';
 	import { onMount } from 'svelte';
 
 	let showLoadingScreen = false;
 
 	onMount(() => {
-		console.log('Message');
-
-		const socket = $ws();
-
-		console.log(socket);
-
-		socket.emit('message', 'Hello!');
-
-		socket.on('serverMessage', (data) => {
-			console.log('Server says: ', data);
-		});
+		// const socket = $ws();
+		// console.log(socket);
+		// socket.emit('message', 'Hello!');
+		// socket.on('serverMessage', (data) => {
+		// 	console.log('Server says: ', data);
+		// });
 	});
 </script>
 

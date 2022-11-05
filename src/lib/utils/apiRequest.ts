@@ -1,18 +1,8 @@
+import { PUBLIC_API_URL, PUBLIC_WEBSOCKET_URL } from '$env/static/public';
+import { externalRequest, type RequestFormat } from './externalRequest';
 
-export interface ApiRequestFormat<T> {
-	error?: {
-		code: number;
-		message: string;
-	};
-	data?: T;
-}
-
-export async function apiRequest<T = unknown>(endpoint: string, options: RequestInit): Promise<ApiRequestFormat<T>> {
-	const response = await fetch(`http://localhost:5173${endpoint}`, options)
-		.catch(() => new Response('', {
-			status: 503,
-			statusText: 'Network failure',
-		}));
+export async function serverRequest<T = unknown>(url: string, options: RequestInit): Promise<RequestFormat<T>> {
+	const response = await externalRequest(url, options);
 
 	if (!response.ok) {
 		return {
@@ -25,7 +15,15 @@ export async function apiRequest<T = unknown>(endpoint: string, options: Request
 
 	const body = await response.json();
 
-	return {
-		data: body,
-	};
+	console.log(3, body);
+
+	return body;
+}
+
+export async function apiRequest<T = unknown>(endpoint: string, options: RequestInit): Promise<RequestFormat<T>> {
+	return serverRequest(`${PUBLIC_API_URL}${endpoint}`, options);
+}
+
+export async function wsServerRequest<T = unknown>(endpoint: string, options: RequestInit): Promise<RequestFormat<T>> {
+	return serverRequest(`${PUBLIC_WEBSOCKET_URL}${endpoint}`, options);
 }

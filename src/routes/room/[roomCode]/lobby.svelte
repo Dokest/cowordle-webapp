@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { gameManager } from '$lib/stores/gameManagerStore';
-	import { room } from '$lib/stores/roomStore';
 	import CheckSvg from '$lib/svgs/CheckSvg.svelte';
+	import CopySvg from '$lib/svgs/CopySvg.svelte';
 	import CrownSvg from '$lib/svgs/CrownSvg.svelte';
 	import EditSvg from '$lib/svgs/EditSvg.svelte';
 	import type { Player } from '$lib/types/Player';
@@ -9,6 +9,7 @@
 	let localPlayerName = $gameManager.getLocalPlayer().name;
 	let isEditingName: boolean = false;
 	let nameInput: HTMLInputElement;
+	let roomCodeCopied = false;
 
 	$gameManager.when('playersUpdated', (updatedPlayers) => {
 		players = updatedPlayers;
@@ -38,6 +39,13 @@
 		$gameManager.removePlayer(player);
 	}
 
+	async function copyRoomCode(): Promise<void> {
+		roomCodeCopied = true;
+		await navigator.clipboard.writeText(window.location.href);
+
+		setTimeout(() => (roomCodeCopied = false), 2000);
+	}
+
 	function startGame(): void {
 		//
 	}
@@ -49,7 +57,7 @@
 			{@const isLocal = $gameManager.isLocalPlayer(player)}
 			{@const isPlayerAuth = $gameManager.isPlayerHost(player)}
 
-			<div class="flex items-center gap-3">
+			<div class="flex items-center gap-3 font-semibold">
 				<div
 					class="relative w-[90%] md:w-64 px-3 py-2 flex flex-[7] items-center gap-x-1 bg-neutral-600 rounded-lg
 							{isLocal ? 'ring-1 ring-orange-500' : ''}"
@@ -75,7 +83,11 @@
 							class="w-[10%] h-full px-2 flex-1 flex items-center md:w-8 hover:text-neutral-300"
 						>
 							{#if isLocal}
-								<button on:click={() => toggleNameEditing()} class="">
+								<button
+									title="Edit your name"
+									on:click={() => toggleNameEditing()}
+									class=""
+								>
 									{#if isEditingName}
 										<CheckSvg />
 									{:else}
@@ -84,7 +96,7 @@
 								</button>
 							{/if}
 						</div>
-					{:else if isAuth || true}
+					{:else if isAuth}
 						<p>{player.name}</p>
 						<button
 							title="Remove player"
@@ -115,10 +127,25 @@
 	</div>
 </div>
 
-<button
-	disabled={!$room || !$room.isLocalHost()}
-	on:click={() => startGame()}
-	class="mx-auto my-5 px-3 py-2 rounded-lg border disabled:bg-neutral-200 disabled:text-neutral-800 font-semibold disabled:cursor-not-allowed cursor-pointer"
->
-	START
-</button>
+<div class="my-5 flex items-center justify-around">
+	<button
+		disabled={!isAuth}
+		on:click={() => startGame()}
+		class="px-3 py-2 rounded-lg font-semibold cursor-pointer disabled:cursor-default {isAuth
+			? 'border'
+			: ''}"
+	>
+		{isAuth ? 'Start' : 'Waiting for the game to start'}
+	</button>
+
+	<div class="flex gap-2">
+		<p>Share the room code</p>
+		<button on:click={() => copyRoomCode()}>
+			{#if roomCodeCopied}
+				<CheckSvg animate={true} />
+			{:else}
+				<CopySvg />
+			{/if}
+		</button>
+	</div>
+</div>

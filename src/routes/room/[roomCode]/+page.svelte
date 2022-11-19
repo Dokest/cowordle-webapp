@@ -7,7 +7,7 @@
 	import { LocalController } from '$lib/types/LocalController';
 	import { GameManager } from '$lib/utils/GameManager';
 	import { InputManager } from '$lib/utils/InputManager';
-	import { generateString } from '$lib/utils/randomString';
+	import { generateRandomName } from '$lib/utils/randomString';
 	import { onMount } from 'svelte';
 	import Lobby from './lobby.svelte';
 
@@ -22,7 +22,7 @@
 	onMount(() => {
 		const localPlayer = new LocalController(new InputManager(), 5, 5);
 
-		const randomPlayerName = generateString(5);
+		const randomPlayerName = generateRandomName();
 		gameManager.set(new GameManager(roomCode, localPlayer, $ws, randomPlayerName));
 
 		$gameManager.connectToRoom().then(() => {

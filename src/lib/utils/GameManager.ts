@@ -129,7 +129,7 @@ export class GameManager<Initialized = true> {
 
 		this.socket.on('player_disconnected', ({ playerUuid, reason }) => {
 			if (this.localPlayer.uuid === playerUuid) {
-				return goto('/');
+				return goto('/removed');
 			}
 
 			this.players = this.players.filter((player) => player.uuid !== playerUuid);

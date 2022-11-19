@@ -135,7 +135,7 @@
 			? 'border'
 			: ''}"
 	>
-		{isAuth ? 'Start' : 'Waiting for the game to start'}
+		{isAuth ? 'Start game' : 'Waiting for the game to start'}
 	</button>
 
 	<div class="flex gap-2">

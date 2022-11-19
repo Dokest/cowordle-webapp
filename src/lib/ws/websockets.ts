@@ -1,31 +1,38 @@
 import { PUBLIC_WEBSOCKET_URL } from '$env/static/public';
-import type { Player } from '$lib/types/Player';
+import type { InitialPlayerInfoDto } from '$lib/dtos/PlayerDto';
+import type { Uuid } from '$lib/types/Uuid';
 import ioClient, { Socket } from 'socket.io-client';
 
 export type WebSocketDialogueEvent = {
 	ping: () => void;
 	message: (message: string) => string;
-	setup: (args: { roomCode: string; playerName: string }) => boolean;
+	setup: (args: { roomCode: string; playerName: string }) => {
+		players: InitialPlayerInfoDto[];
+		hostPlayer: InitialPlayerInfoDto;
+		localPlayer: InitialPlayerInfoDto;
+	};
 };
 
 export type WebsocketInEvent = {
 	initial_room_info: {
-		players: Player[];
-		host: Player;
+		players: InitialPlayerInfoDto[];
+		hostPlayer: InitialPlayerInfoDto;
+		localPlayer: InitialPlayerInfoDto;
 	};
 	initial_local_info: {
 		uuid: string,
 	};
 	player_connected: {
-		player: string;
+		newPlayer: InitialPlayerInfoDto;
 	};
 	player_disconnected: {
-		player: string;
+		playerUuid: Uuid;
+		reason: string;
 	};
 	update_player_name: {
 		playerUuid: string;
 		newPlayerName: string;
-	}
+	};
 };
 
 export type WebsocketOutEvent = {
@@ -34,9 +41,14 @@ export type WebsocketOutEvent = {
 		playerName: string;
 	};
 	update_player_name: {
-		uuid: string;
+		uuid: Uuid;
 		roomCode: string;
 		newPlayerName: string;
+	};
+	remove_player: {
+		targetPlayerUuid: Uuid;
+		roomCode: string;
+		requestingPlayerUuid: Uuid;
 	};
 };
 

@@ -1,52 +1,43 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { room } from '$lib/stores/roomStore';
+	import LoadingParty from '$lib/components/prefrabs/LoadingParty.svelte';
+	import { gameManager } from '$lib/stores/gameManagerStore';
 	import { ws } from '$lib/stores/websocketStore';
-	import { Player } from '$lib/types/Player';
-	import { Room } from '$lib/types/Room';
+	import { LocalController } from '$lib/types/LocalController';
+	import { GameManager } from '$lib/utils/GameManager';
+	import { InputManager } from '$lib/utils/InputManager';
 	import { generateString } from '$lib/utils/randomString';
-	import type { WebsocketConnection } from '$lib/ws/websockets';
 	import { onMount } from 'svelte';
 	import Lobby from './lobby.svelte';
 
 	const roomCode: string = $page.params['roomCode'];
 
-	let socket: WebsocketConnection;
-
-	let roomState: 'lobby' | 'in-game' = 'lobby';
+	let roomState: 'loading' | 'lobby' | 'in-game' = 'loading';
 
 	if (!roomCode) {
-		goto('/error?e=missing-partycode');
+		goto('/error?e=missing-roomcode');
 	}
 
-	onMount(async () => {
-		socket = $ws;
+	onMount(() => {
+		const localPlayer = new LocalController(new InputManager(), 5, 5);
 
-		const playerName = generateString(3);
-		const localPlayer = new Player(playerName);
+		const randomPlayerName = generateString(5);
+		gameManager.set(new GameManager(roomCode, localPlayer, $ws, randomPlayerName));
 
-		socket.on('initial_local_info', ({ uuid }) => {
-			localPlayer.uuid = uuid;
-		});
-
-		socket.on('initial_room_info', ({ players: allPlayers, host }) => {
-			const newRoom = new Room(roomCode, host, localPlayer, allPlayers);
-
-			room.init(newRoom);
-		});
-
-		socket.emit('setup', {
-			playerName,
-			roomCode,
+		$gameManager.connectToRoom().then(() => {
+			roomState = 'lobby';
 		});
 	});
-
-	console.log(roomCode);
 </script>
 
 <div class="mt-5 w-[90%] md:w-[50%] mx-auto">
-	{#if roomState === 'lobby'}
+	{#if roomState === 'loading'}
+		<LoadingParty />
+	{:else if roomState === 'lobby'}
 		<Lobby />
+	{:else if roomState === 'in-game'}
+		IN GAME
+		<!-- <LocalWordleBoard tries={$room.gameManager.localPlayer} /> -->
 	{/if}
 </div>

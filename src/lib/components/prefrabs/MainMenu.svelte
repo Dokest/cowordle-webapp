@@ -8,8 +8,6 @@
 			method: 'POST',
 		});
 
-		console.log(2, data);
-
 		if (data) {
 			const { roomCode } = data;
 			goto(`/room/${roomCode}`);
@@ -17,14 +15,14 @@
 	}
 </script>
 
-<div class="mt-10 flex flex-col items-center gap-5">
+<div class="h-96 mt-10 flex flex-col items-center gap-5">
 	<div on:click={host} on:keydown={host}>
-		<Word word="Host" length={5} />
+		<Word word="Host" length={5} showOnlyColors={false} />
 	</div>
 	<a href="/join">
-		<Word word="Join" length={5} />
+		<Word word="Join" length={5} showOnlyColors={false} />
 	</a>
 	<a href="/faq">
-		<Word word="Help" length={5} />
+		<Word word="Help" length={5} showOnlyColors={false} />
 	</a>
 </div>

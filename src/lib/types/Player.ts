@@ -1,8 +1,7 @@
+import type { Uuid } from './Uuid';
 
-export class Player {
-	uuid = '';
-
-	constructor(
-		public name: string,
-	) { }
+export interface Player {
+	uuid: Uuid;
+	name: string;
+	connectionTimestamp: number;
 }

@@ -3,7 +3,6 @@ import { writable } from 'svelte/store';
 
 
 function handleConnection() {
-	console.log('CREATE');
 	return new WebsocketConnection();
 }
 

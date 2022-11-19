@@ -15,8 +15,6 @@ export async function serverRequest<T = unknown>(url: string, options: RequestIn
 
 	const body = await response.json();
 
-	console.log(3, body);
-
 	return body;
 }
 

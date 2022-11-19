@@ -1,7 +1,14 @@
+import type { GameManager } from '$lib/utils/GameManager';
 import type { Player } from './Player';
 
 export class Room {
-	constructor(private readonly code: string, private readonly hostPlayer: Player, private readonly localPlayer: Player, private readonly connectedPlayers: Player[]) { }
+	constructor(
+		private readonly code: string,
+		private readonly hostPlayer: Player,
+		private readonly localPlayer: Player,
+		private readonly connectedPlayers: Player[],
+		readonly gameManager: GameManager
+	) { }
 
 	getCode(): string {
 		return this.code;

@@ -1,11 +1,15 @@
+import { Emitter } from '$lib/utils/Emitter';
 import type { InputManager } from '$lib/utils/InputManager';
 
 export class LocalController {
 	readonly wordTries: (string | null)[] = [];
 
+	readonly onChangeTries = new Emitter<(tries: (string | null)[]) => void>();
+
 	private currentWordIndex = 0;
 
 	connectionTimestamp = 0;
+
 
 	constructor(private inputManager: InputManager, private maxTries: number, private wordLength: number) {
 		this.wordTries.length = this.maxTries;
@@ -24,6 +28,8 @@ export class LocalController {
 			} else if (current.length < this.wordLength) {
 				this.wordTries[this.currentWordIndex] += letter;
 			}
+
+			this.onChangeTries.broadcast(this.wordTries);
 		});
 
 		this.inputManager.listen('onBackspace', () => {
@@ -34,10 +40,27 @@ export class LocalController {
 			}
 
 			this.wordTries[this.currentWordIndex] = currentWord.substring(0, currentWord.length - 1);
+
+			this.onChangeTries.broadcast(this.wordTries);
 		});
 
 		this.inputManager.listen('onEnter', () => {
-			console.log('ENTER');
+			const currentWord = this.wordTries[this.currentWordIndex];
+
+			if (!currentWord) {
+				throw new Error('input-error');
+			}
+
+			if (currentWord.length < this.wordLength) {
+				return;
+			}
+
+			if (this.currentWordIndex < this.maxTries) {
+				this.currentWordIndex++;
+				// TODO: Send word to the backend
+			} else {
+				console.log('FINISH');
+			}
 		});
 	}
 }

@@ -108,6 +108,10 @@ export class GameManager<Initialized = true> {
 		return this.localPlayer;
 	}
 
+	getLocalController(): LocalController {
+		return this.localController;
+	}
+
 	private bindSocketEvents(): void {
 		this.socket.on('player_connected', ({ newPlayer }) => {
 			this.addPlayer(newPlayer);

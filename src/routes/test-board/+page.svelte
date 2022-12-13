@@ -2,7 +2,6 @@
 	import Keyboard from '$lib/components/boards/Keyboard.svelte';
 	import WordleBoard from '$lib/components/boards/WordleBoard.svelte';
 	import { gameManager } from '$lib/stores/gameManagerStore';
-	import { input } from '$lib/stores/inputStore';
 	import { ws } from '$lib/stores/websocketStore';
 	import { LocalController } from '$lib/types/LocalController';
 	import { GameManager } from '$lib/utils/GameManager';
@@ -24,36 +23,41 @@
 		const newGameManager = new GameManager(
 			'AAAA',
 			new LocalController(new InputManager(), 5, 5),
-			$ws
+			$ws,
+			'test'
 		);
 
 		gameManager.set(newGameManager);
 
-		$input.listen('onLetter', (letter: string) => {
-			let current = tries[currentTry];
-
-			if (current === null) {
-				tries[currentTry] = letter;
-			} else if (current.length < WORD_LENGTH) {
-				tries[currentTry] += letter;
-			}
+		$gameManager.getLocalController().onChangeTries.listen((playerTries) => {
+			tries = playerTries;
 		});
 
-		$input.listen('onBackspace', () => {
-			const currentWord = tries[currentTry];
+		// $input.listen('onLetter', (letter: string) => {
+		// 	let current = tries[currentTry];
 
-			if (currentWord === null) {
-				return;
-			}
+		// 	if (current === null) {
+		// 		tries[currentTry] = letter;
+		// 	} else if (current.length < WORD_LENGTH) {
+		// 		tries[currentTry] += letter;
+		// 	}
+		// });
 
-			tries[currentTry] = currentWord.substring(0, currentWord.length - 1);
+		// $input.listen('onBackspace', () => {
+		// 	const currentWord = tries[currentTry];
 
-			tries = tries;
-		});
+		// 	if (currentWord === null) {
+		// 		return;
+		// 	}
 
-		$input.listen('onEnter', () => {
-			console.log('ENTER');
-		});
+		// 	tries[currentTry] = currentWord.substring(0, currentWord.length - 1);
+
+		// 	tries = tries;
+		// });
+
+		// $input.listen('onEnter', () => {
+		// 	console.log('ENTER');
+		// });
 	});
 </script>
 

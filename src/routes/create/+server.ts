@@ -7,8 +7,8 @@ export async function POST(): Promise<Response> {
 		method: 'GET',
 	});
 
-	if (response.error) {
-		return new Response(null, {
+	if (response?.error) {
+		return new Response('Can not connect to the WS server', {
 			status: 500,
 		});
 	}

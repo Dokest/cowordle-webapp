@@ -4,10 +4,11 @@ import type { LocalController } from '$lib/types/LocalController';
 import type { Player } from '$lib/types/Player';
 import type { Uuid } from '$lib/types/Uuid';
 import type { WebsocketConnection } from '$lib/ws/websockets';
-import type { Emitter } from './Emitter';
+import { Emitter } from './Emitter';
 import { GameNotifies } from './GameNotifies';
 
-export class GameManager<Initialized = true> {
+
+export class GameManager {
 	private readonly notifies: GameNotifies = new GameNotifies();
 
 	private players: Player[] = [];
@@ -36,6 +37,8 @@ export class GameManager<Initialized = true> {
 		this.localPlayer = this.players.find((player) => player.uuid === localPlayer.uuid)!;
 
 		this.notifies.playersUpdated.broadcast(this.players);
+
+		this.prepareSendingWords();
 	}
 
 	isLocalHost(): boolean {
@@ -58,7 +61,34 @@ export class GameManager<Initialized = true> {
 		event: TNotify,
 		then: GameNotifies[TNotify] extends Emitter<infer TFn> ? TFn : never
 	): void {
-		this.notifies[event].listen(then);
+		const notify = this.notifies[event];
+
+		if (notify instanceof Emitter) {
+			notify.listen(then);
+		}
+	}
+
+	startGame(): void {
+		this.socket.emit('start_game', {
+			playerUuid: this.localPlayer.uuid,
+			roomCode: this.roomCode,
+		});
+	}
+
+	prepareSendingWords(): void {
+		this.localController.onSendWord.listen(async ([word]) => {
+			this.localController.toggleInputs(false);
+
+			const result = await this.socket.dialogue('validate_word', {
+				word,
+				playerUuid: this.localPlayer.uuid,
+				roomCode: this.roomCode,
+			});
+
+			this.notifies.onLocalWordResult.broadcast(result.result, word);
+
+			this.localController.toggleInputs(true);
+		});
 	}
 
 	private addPlayer(player: InitialPlayerInfoDto): void {
@@ -113,6 +143,8 @@ export class GameManager<Initialized = true> {
 	}
 
 	private bindSocketEvents(): void {
+		console.log('BINDING EVENTS');
+
 		this.socket.on('player_connected', ({ newPlayer }) => {
 			this.addPlayer(newPlayer);
 
@@ -140,5 +172,44 @@ export class GameManager<Initialized = true> {
 
 			this.notifies.playersUpdated.broadcast(this.players);
 		});
+
+		this.socket.on('on_start_game', () => {
+			console.log('ON START GAME');
+
+			this.notifies.gameStarts.broadcast(this.players);
+		});
+
+		this.socket.on('player_word', ({ playerUuid, result }) => {
+			console.log(`Player ${playerUuid} got [${result.join(', ')}]`);
+		});
+
+		this.socket.on('player_win', ({ playerUuid }) => {
+			console.log(`Player ${playerUuid} WON`);
+
+			const isLocalWinner = this.localPlayer.uuid === playerUuid;
+
+			const winnerPlayer = this.players.find((player) => player.uuid === playerUuid);
+
+			if (!winnerPlayer) {
+				console.error('No winner player found (?)');
+				return;
+			}
+
+			this.notifies.onPlayerWin.broadcast(isLocalWinner, winnerPlayer.name);
+		});
+	}
+
+
+	closeGame(): void {
+		this.clearOldMatch();
+
+		this.socket.disconnect();
+	}
+
+
+	clearOldMatch(): void {
+		//this.localController.unbindAllEvents();
+		this.localController.clearOldData();
+		this.notifies.unbindAll();
 	}
 }

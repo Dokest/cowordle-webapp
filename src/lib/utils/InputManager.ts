@@ -4,11 +4,13 @@ export type OnLetterCallback = (letter: string) => void;
 export type OnBackspaceCallback = () => void;
 export type OnEnterCallback = () => void;
 
+
 export interface InputEmitterEvents {
 	onLetter: OnLetterCallback;
 	onBackspace: OnBackspaceCallback;
 	onEnter: OnEnterCallback;
 }
+
 
 export class InputManager {
 	readonly events: { [Key in keyof InputEmitterEvents]: Emitter<InputEmitterEvents[Key]> } = {
@@ -35,6 +37,10 @@ export class InputManager {
 		}
 
 		this.events[name].remove(fn);
+	}
+
+	unbindAll(): void {
+		Object.values(this.events).forEach((event) => event.clear());
 	}
 
 	private init(): void {

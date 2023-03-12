@@ -1,6 +1,7 @@
 import { PUBLIC_WEBSOCKET_URL } from '$env/static/public';
 import type { InitialPlayerInfoDto } from '$lib/dtos/PlayerDto';
 import type { Uuid } from '$lib/types/Uuid';
+import type { WordlePoints } from '$lib/types/WordlePoints';
 import ioClient, { Socket } from 'socket.io-client';
 
 export type WebSocketDialogueEvent = {
@@ -10,6 +11,9 @@ export type WebSocketDialogueEvent = {
 		players: InitialPlayerInfoDto[];
 		hostPlayer: InitialPlayerInfoDto;
 		localPlayer: InitialPlayerInfoDto;
+	};
+	validate_word: (arsgs: { roomCode: string, playerUuid: string, word: string }) => {
+		result: WordlePoints[];
 	};
 };
 
@@ -33,6 +37,14 @@ export type WebsocketInEvent = {
 		playerUuid: string;
 		newPlayerName: string;
 	};
+	on_start_game: void;
+	player_word: {
+		playerUuid: string;
+		result: WordlePoints[];
+	};
+	player_win: {
+		playerUuid: string;
+	};
 };
 
 export type WebsocketOutEvent = {
@@ -49,6 +61,10 @@ export type WebsocketOutEvent = {
 		targetPlayerUuid: Uuid;
 		roomCode: string;
 		requestingPlayerUuid: Uuid;
+	};
+	start_game: {
+		playerUuid: Uuid;
+		roomCode: string;
 	};
 };
 

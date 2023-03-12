@@ -17,12 +17,12 @@
 
 <div class="h-96 mt-10 flex flex-col items-center gap-5">
 	<div on:click={host} on:keydown={host}>
-		<Word word="Host" length={5} showOnlyColors={false} />
+		<Word word="Host" length={5} showOnlyColors={false} results={[]} />
 	</div>
 	<a href="/join">
-		<Word word="Join" length={5} showOnlyColors={false} />
+		<Word word="Join" length={5} showOnlyColors={false} results={[]} />
 	</a>
 	<a href="/faq">
-		<Word word="Help" length={5} showOnlyColors={false} />
+		<Word word="Help" length={5} showOnlyColors={false} results={[]} />
 	</a>
 </div>

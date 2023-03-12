@@ -6,6 +6,12 @@ export class Emitter<T extends (...args: any[]) => void> {
 		this.callbacks.forEach(callback => { callback(...params) });
 	}
 
+	async broadcastAsync(...params: Parameters<T>): Promise<void> {
+		for await (const callback of this.callbacks) {
+			await callback(params);
+		}
+	}
+
 	listen(callback: T): void {
 		this.callbacks.push(callback);
 	}

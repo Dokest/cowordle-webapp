@@ -47,7 +47,7 @@
 	}
 
 	function startGame(): void {
-		//
+		$gameManager.startGame();
 	}
 </script>
 
@@ -131,9 +131,8 @@
 	<button
 		disabled={!isAuth}
 		on:click={() => startGame()}
-		class="px-3 py-2 rounded-lg font-semibold cursor-pointer disabled:cursor-default {isAuth
-			? 'border'
-			: ''}"
+		class="px-3 py-2 rounded-lg font-semibold cursor-pointer disabled:cursor-default
+			{isAuth ? 'border' : ''}"
 	>
 		{isAuth ? 'Start game' : 'Waiting for the game to start'}
 	</button>

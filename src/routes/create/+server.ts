@@ -1,15 +1,11 @@
 import { wsServerRequest } from '$lib/utils/apiRequest';
-import { generateString } from '$lib/utils/randomString';
 import { json } from '@sveltejs/kit';
 
-export async function POST(): Promise<Response> {
-	const roomCode = generateString(6);
 
-	const response = await wsServerRequest(`/create-room?code=${roomCode}`, {
+export async function POST(): Promise<Response> {
+	const response = await wsServerRequest<{ code: string }>(`/create-room`, {
 		method: 'GET',
 	});
-
-	console.log(response);
 
 	if (response.error) {
 		return new Response(null, {
@@ -17,7 +13,9 @@ export async function POST(): Promise<Response> {
 		});
 	}
 
+	const code = response.data?.code;
+
 	return json({
-		data: { roomCode },
+		data: { roomCode: code },
 	});
 }

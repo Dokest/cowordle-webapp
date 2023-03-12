@@ -48,6 +48,7 @@
 
 	function prepareGame(): void {
 		$gameManager.when('gameStarts', () => {
+			$gameManager.getLocalController().toggleInputs(true);
 			roomState = 'in-game';
 		});
 
@@ -56,6 +57,8 @@
 		});
 
 		$gameManager.when('onPlayerWin', (localPlayerWinner, winnerName) => {
+			$gameManager.getLocalController().toggleInputs(false);
+
 			winnerData.isLocalPlayer = localPlayerWinner;
 			winnerData.name = winnerName;
 

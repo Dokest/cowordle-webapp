@@ -12,7 +12,7 @@ export class LocalController {
 
 	private currentWordIndex = 0;
 
-	private acceptsInputs = true;
+	private acceptsInputs = false;
 
 	connectionTimestamp = 0;
 
@@ -43,6 +43,10 @@ export class LocalController {
 
 	private bindKeys(): void {
 		this.inputManager.listen('onLetter', (letter: string) => {
+			if (!this.acceptsInputs) {
+				return;
+			}
+
 			const current = this.wordTries[this.currentWordIndex];
 
 			if (current === '') {
@@ -55,6 +59,10 @@ export class LocalController {
 		});
 
 		this.inputManager.listen('onBackspace', () => {
+			if (!this.acceptsInputs) {
+				return;
+			}
+
 			const currentWord = this.wordTries[this.currentWordIndex];
 
 			if (currentWord === null) {
@@ -67,6 +75,10 @@ export class LocalController {
 		});
 
 		this.inputManager.listen('onEnter', async () => {
+			if (!this.acceptsInputs) {
+				return;
+			}
+
 			const currentWord = this.wordTries[this.currentWordIndex];
 
 			if (!currentWord) {

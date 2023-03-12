@@ -19,7 +19,7 @@ export class LocalController {
 
 	constructor(private inputManager: InputManager, private maxTries: number, private wordLength: number) {
 		this.wordTries.length = this.maxTries;
-		this.wordTries = this.wordTries.fill('', 0, this.maxTries);
+		this.clearInputs();
 
 		this.bindKeys();
 	}
@@ -27,6 +27,10 @@ export class LocalController {
 
 	toggleInputs(shouldAcceptInput: boolean): void {
 		this.acceptsInputs = shouldAcceptInput;
+	}
+
+	clearInputs(): void {
+		this.wordTries = this.wordTries.fill('', 0, this.maxTries);
 	}
 
 

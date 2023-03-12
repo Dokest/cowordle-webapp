@@ -49,6 +49,7 @@
 
 	function prepareGame(): void {
 		$gameManager.when('gameStarts', () => {
+			$gameManager.clearOldMatch();
 			$gameManager.getLocalController().toggleInputs(true);
 
 			roomState = 'in-game';

@@ -4,6 +4,7 @@
 
 	export let isLocalWinner: boolean;
 	export let winnerName: string;
+	export let solution: string;
 
 	const events = createEventDispatcher();
 
@@ -19,6 +20,8 @@
 <div class="flex flex-col justify-center items-center text-xl">
 	<p>{isLocalWinner ? 'You' : winnerName}</p>
 	<p class="fancy-text text-2xl">WON</p>
+
+	<p>The solution was <span class="font-semibold">{solution}</span></p>
 </div>
 
 <div class="my-10 flex flex-col md:flex-row justify-center gap-y-5">

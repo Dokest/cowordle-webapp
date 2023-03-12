@@ -183,7 +183,7 @@ export class GameManager {
 			console.log(`Player ${playerUuid} got [${result.join(', ')}]`);
 		});
 
-		this.socket.on('player_win', ({ playerUuid }) => {
+		this.socket.on('player_win', ({ playerUuid, solution }) => {
 			console.log(`Player ${playerUuid} WON`);
 
 			const isLocalWinner = this.localPlayer.uuid === playerUuid;
@@ -195,7 +195,7 @@ export class GameManager {
 				return;
 			}
 
-			this.notifies.onPlayerWin.broadcast(isLocalWinner, winnerPlayer.name);
+			this.notifies.onPlayerWin.broadcast(isLocalWinner, winnerPlayer.name, solution);
 		});
 	}
 

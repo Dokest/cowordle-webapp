@@ -31,6 +31,7 @@
 	let winnerData = {
 		isLocalPlayer: false,
 		name: '',
+		solution: '',
 	};
 
 	onMount(() => {
@@ -49,6 +50,7 @@
 	function prepareGame(): void {
 		$gameManager.when('gameStarts', () => {
 			$gameManager.getLocalController().toggleInputs(true);
+
 			roomState = 'in-game';
 		});
 
@@ -56,11 +58,12 @@
 			tries = playerTries;
 		});
 
-		$gameManager.when('onPlayerWin', (localPlayerWinner, winnerName) => {
+		$gameManager.when('onPlayerWin', (localPlayerWinner, winnerName, solution) => {
 			$gameManager.getLocalController().toggleInputs(false);
 
 			winnerData.isLocalPlayer = localPlayerWinner;
 			winnerData.name = winnerName;
+			winnerData.solution = solution;
 
 			roomState = 'post-match';
 		});
@@ -100,6 +103,7 @@
 		<PostMatch
 			isLocalWinner={winnerData.isLocalPlayer}
 			winnerName={winnerData.name}
+			solution={winnerData.solution}
 			on:rematch={rematch}
 			on:goToMainMenu={backToMainMenu}
 		/>

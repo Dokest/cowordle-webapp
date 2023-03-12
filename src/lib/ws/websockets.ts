@@ -44,6 +44,7 @@ export type WebsocketInEvent = {
 	};
 	player_win: {
 		playerUuid: string;
+		solution: string;
 	};
 };
 

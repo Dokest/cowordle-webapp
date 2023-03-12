@@ -11,7 +11,6 @@
     "strict": true,
     "baseUrl": "src",
     "paths": {
-      "$lib": ["lib"],
       "$lib/*": ["lib/*"],
       "$components/*": ["lib/components/*"],
       "$stores/*": ["lib/stores/*"],

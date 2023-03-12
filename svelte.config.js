@@ -11,6 +11,8 @@ const config = {
 	kit: {
 		adapter: adapter({ out: 'build' }),
 		alias: {
+			"$lib": "src/lib",
+			"$lib/*": "src/lib/*",
 			"$components/*": "./src/lib/components/*",
 			"$stores/*": "./src/lib/stores/*",
 			"$templates/*": "./src/lib/templates/*",

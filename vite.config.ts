@@ -7,7 +7,8 @@ const config: UserConfig = {
 	plugins: [sveltekit()],
 	resolve: {
 		alias: {
-			$components: resolve(__dirname, "$lib/components/"),
+			$lib: resolve(__dirname, "./src/lib/"),
+			$components: resolve(__dirname, "./src/lib/components/"),
 			$stores: resolve(__dirname, "./src/lib/stores/"),
 			$templates: resolve(__dirname, "./src/lib/templates/"),
 			$utils: resolve(__dirname, "./src/lib/utils/"),

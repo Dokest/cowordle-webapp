@@ -51,7 +51,7 @@
 
 	function prepareGame(): void {
 		$gameManager.when('gameStarts', (_, startTimeMs) => {
-			lobby.startCountdown(startTimeMs);
+			lobby?.startCountdown(startTimeMs);
 
 			setTimeout(() => {
 				$gameManager.getLocalController().clearInputs();

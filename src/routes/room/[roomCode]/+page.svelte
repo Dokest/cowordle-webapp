@@ -34,6 +34,8 @@
 		solution: '',
 	};
 
+	let lobby: Lobby;
+
 	onMount(() => {
 		const localPlayer = new LocalController(new InputManager(), MAX_TRIES, 5);
 
@@ -48,11 +50,15 @@
 	});
 
 	function prepareGame(): void {
-		$gameManager.when('gameStarts', () => {
-			$gameManager.getLocalController().clearInputs();
-			$gameManager.getLocalController().toggleInputs(true);
+		$gameManager.when('gameStarts', (_, startTimeMs) => {
+			lobby.startCountdown(startTimeMs);
 
-			roomState = 'in-game';
+			setTimeout(() => {
+				$gameManager.getLocalController().clearInputs();
+				$gameManager.getLocalController().toggleInputs(true);
+
+				roomState = 'in-game';
+			}, startTimeMs - Date.now());
 		});
 
 		$gameManager.getLocalController().onChangeTries.listen((playerTries) => {
@@ -88,11 +94,8 @@
 	{#if roomState === 'loading'}
 		<LoadingParty />
 	{:else if roomState === 'lobby'}
-		<Lobby />
+		<Lobby bind:this={lobby} />
 	{:else if roomState === 'in-game'}
-		IN GAME
-		<!-- <LocalWordleBoard tries={$room.gameManager.localPlayer} /> -->
-
 		<div class="w-full md:w-96 mx-auto">
 			<WordleBoard {tries} wordLength={5} showOnlyColors={false} />
 

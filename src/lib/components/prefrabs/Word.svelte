@@ -10,7 +10,6 @@
 	export let index: number = -1;
 
 	let letters: (string | null)[] = [];
-	let wordDiv: HTMLElement;
 
 	if (word) {
 		letters = Array.from({ length: word.length }, () => null);
@@ -28,8 +27,13 @@
 
 	if ($gameManager?.localController && index !== -1) {
 		const lc = $gameManager.localController;
+
 		lc.onFailWord.listen((wordIndex) => {
-			if (index === wordIndex && !wordDiv.classList.contains('show-error')) {
+			console.log(index, wordIndex);
+
+			const wordDiv = document.getElementById(`word_${index}`);
+
+			if (index === wordIndex && wordDiv && !wordDiv.classList.contains('show-error')) {
 				console.log('FIAL');
 				wordDiv.classList.add('show-error');
 
@@ -42,7 +46,7 @@
 </script>
 
 <div
-	bind:this={wordDiv}
+	id={index !== -1 ? `word_${index}` : ''}
 	class="w-fit flex gap-x-1 group cursor-pointer select-none transition-shadow duration-300"
 >
 	{#each letters as letter, index}

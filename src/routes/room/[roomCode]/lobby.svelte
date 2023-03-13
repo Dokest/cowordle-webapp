@@ -1,15 +1,18 @@
 <script lang="ts">
 	import { gameManager } from '$lib/stores/gameManagerStore';
 	import CheckSvg from '$lib/svgs/CheckSvg.svelte';
-	import CopySvg from '$lib/svgs/CopySvg.svelte';
 	import CrownSvg from '$lib/svgs/CrownSvg.svelte';
 	import EditSvg from '$lib/svgs/EditSvg.svelte';
+	import ExitSvg from '$lib/svgs/ExitSvg.svelte';
+	import PlaySvg from '$lib/svgs/PlaySvg.svelte';
+	import ShareSvg from '$lib/svgs/ShareSvg.svelte';
 	import type { Player } from '$lib/types/Player';
 
 	let localPlayerName = $gameManager.getLocalPlayer().name;
 	let isEditingName: boolean = false;
 	let nameInput: HTMLInputElement;
 	let roomCodeCopied = false;
+	let countdown: number | null = null;
 
 	$gameManager.when('playersUpdated', (updatedPlayers) => {
 		players = updatedPlayers;
@@ -24,6 +27,39 @@
 	let players: Player[] = [];
 
 	players = $gameManager.getPlayers();
+
+	export function startCountdown(startAt: number): void {
+		const totalTime = startAt - Date.now();
+		const topTime = totalTime % 1000;
+		countdown = (totalTime - topTime) / 1000 + 1;
+
+		const countdownFn = () => {
+			countdown! -= 1;
+			console.log(countdown);
+
+			if (countdown === 0) {
+				countdown = null;
+			} else {
+				setTimeout(countdownFn, 1000);
+			}
+		};
+
+		setTimeout(countdownFn, topTime);
+
+		// for (let i = fullSeconds; i >= 0; --i) {
+		// 	const left = i - 1;
+
+		// 	setTimeout(() => {
+		// 		const time = fullSeconds - left;
+		// 		countdown = time;
+
+		// 		if (countdown === 0) {
+		// 			countdown = null;
+		// 		}
+		// 		console.log(countdown);
+		// 	}, left * 1000);
+		// }
+	}
 
 	function toggleNameEditing(): void {
 		isEditingName = !isEditingName;
@@ -59,8 +95,8 @@
 
 			<div class="flex items-center gap-3 font-semibold">
 				<div
-					class="relative w-[90%] md:w-64 px-3 py-2 flex flex-[7] items-center gap-x-1 bg-neutral-600 rounded-lg
-							{isLocal ? 'ring-1 ring-orange-500' : ''}"
+					class="relative w-[90%] md:w-64 px-3 py-2 flex flex-[7] items-center gap-x-1 bg-neutral-900 rounded-lg border
+							{isLocal ? 'border border-orange-500' : 'border-white'}"
 				>
 					{#if isPlayerAuth}
 						<CrownSvg
@@ -127,17 +163,44 @@
 	</div>
 </div>
 
-<div class="my-5 flex items-center justify-around">
+<div class="my-5 flex items-center justify-center gap-5">
 	<button
+		title={isAuth ? 'Start the game!' : 'Only the host can start the game'}
 		disabled={!isAuth}
 		on:click={() => startGame()}
-		class="px-3 py-2 rounded-lg font-semibold cursor-pointer disabled:cursor-default
-			{isAuth ? 'border' : ''}"
+		class="px-3 py-2 rounded-lg font-semibold cursor-pointer disabled:cursor-default border
+			{countdown !== null ? 'border-green-500' : ''}
+			{countdown === null ? 'disabled:border-neutral-500' : ''}
+			{isAuth ? 'bg-neutral-900' : ''}"
 	>
-		{isAuth ? 'Start game' : 'Waiting for the game to start'}
+		<div class="flex items-center gap-x-1">
+			<PlaySvg class="w-5 {countdown === null && !isAuth ? 'text-neutral-500' : ''}" />
+
+			{#if countdown}
+				Starting in <span class="font-semibold text-green-500 animate-pulse"
+					>{countdown}</span
+				> seconds
+			{/if}
+		</div>
 	</button>
 
-	<div class="flex gap-2">
+	<button
+		title="Copy & share the room link"
+		on:click={() => copyRoomCode()}
+		class="px-3 py-2 border rounded-lg font-semibold cursor-pointer disabled:cursor-default bg-neutral-900"
+	>
+		{#if roomCodeCopied}
+			<CheckSvg animate={true} />
+		{:else}
+			<ShareSvg />
+		{/if}
+	</button>
+
+	<button title="Exit the room" class="px-3 py-2 border rounded-lg bg-neutral-900">
+		<ExitSvg />
+	</button>
+
+	<!-- <div class="flex gap-2">
 		<p>Share the room code</p>
 		<button on:click={() => copyRoomCode()}>
 			{#if roomCodeCopied}
@@ -146,5 +209,5 @@
 				<CopySvg />
 			{/if}
 		</button>
-	</div>
+	</div> -->
 </div>

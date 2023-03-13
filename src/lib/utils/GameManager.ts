@@ -174,9 +174,9 @@ export class GameManager {
 		});
 
 		this.socket.on('on_start_game', () => {
-			console.log('ON START GAME');
+			// console.log('ON START GAME');
 
-			this.notifies.gameStarts.broadcast(this.players);
+			// this.notifies.gameStarts.broadcast(this.players);
 		});
 
 		this.socket.on('player_word', ({ playerUuid, result }) => {
@@ -196,6 +196,10 @@ export class GameManager {
 			}
 
 			this.notifies.onPlayerWin.broadcast(isLocalWinner, winnerPlayer.name, solution);
+		});
+
+		this.socket.on('start_prematch', ({ start_time }) => {
+			this.notifies.gameStarts.broadcast(this.players, start_time);
 		});
 	}
 

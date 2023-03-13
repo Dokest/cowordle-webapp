@@ -46,6 +46,11 @@ export class LocalController {
 	}
 
 
+	getInputManager(): InputManager {
+		return this.inputManager;
+	}
+
+
 	private bindKeys(): void {
 		this.inputManager.listen('onLetter', (letter: string) => {
 			if (!this.acceptsInputs) {

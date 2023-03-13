@@ -1,18 +1,25 @@
 <script>
+	import HelpSvg from '$lib/svgs/HelpSvg.svelte';
 	import '../app.css';
 </script>
 
 <header
-	class="mt-10 flex items-center justify-center text-[40px] font-semibold text-white cursor-default select-none"
+	class="py-3 flex items-baseline justify-center text-[40px] font-semibold text-white cursor-default select-none bg-neutral-900"
 >
-	<span class="titleLetter">C</span>
-	<span class="titleLetter">o</span>
-	<span class="titleLetter">W</span>
-	<span class="titleLetter">o</span>
-	<span class="titleLetter">r</span>
-	<span class="titleLetter">d</span>
-	<span class="titleLetter">l</span>
-	<span class="titleLetter">e</span>
+	<div class="flex items-center justify-center">
+		<span class="titleLetter">C</span>
+		<span class="titleLetter">o</span>
+		<span class="titleLetter">W</span>
+		<span class="titleLetter">o</span>
+		<span class="titleLetter">r</span>
+		<span class="titleLetter">d</span>
+		<span class="titleLetter">l</span>
+		<span class="titleLetter">e</span>
+	</div>
+
+	<div class="px-5">
+		<HelpSvg class="w-7 my-auto" />
+	</div>
 </header>
 
 <main class="text-white">

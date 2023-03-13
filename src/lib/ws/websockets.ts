@@ -38,6 +38,9 @@ export type WebsocketInEvent = {
 		newPlayerName: string;
 	};
 	on_start_game: void;
+	start_prematch: {
+		start_time: number;
+	};
 	player_word: {
 		playerUuid: string;
 		result: WordlePoints[];

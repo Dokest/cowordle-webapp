@@ -43,6 +43,20 @@ export class InputManager {
 		Object.values(this.events).forEach((event) => event.clear());
 	}
 
+	simulateLetterPress(letter: string): void {
+		const singleLetter = letter[0];
+
+		this.events.onLetter.broadcast(singleLetter);
+	}
+
+	simulateEnterPress(): void {
+		this.events.onEnter.broadcast();
+	}
+
+	simulateBackspace(): void {
+		this.events.onBackspace.broadcast();
+	}
+
 	private init(): void {
 		const body = document.getElementsByTagName('body')[0];
 

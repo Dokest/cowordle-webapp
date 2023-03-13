@@ -6,7 +6,7 @@ export class GameNotifies {
 	playerConnects: Emitter<(player: Player) => void> = new Emitter();
 	playerNameIsUpdated: Emitter<(player: Player) => void> = new Emitter();
 	playersUpdated: Emitter<(players: Player[]) => void> = new Emitter();
-	gameStarts: Emitter<(players: Player[]) => void> = new Emitter();
+	gameStarts: Emitter<(players: Player[], startTimeMs: number) => void> = new Emitter();
 	onLocalWordResult: Emitter<(result: WordlePoints[], word: string) => void> = new Emitter();
 	onPlayerWin: Emitter<(isLocalPlayer: boolean, winnerName: string, solution: string) => void> = new Emitter();
 

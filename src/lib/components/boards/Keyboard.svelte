@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { gameManager } from '$lib/stores/gameManagerStore';
+	import BackspaceSvg from '$lib/svgs/BackspaceSvg.svelte';
+	import CheckSvg from '$lib/svgs/CheckSvg.svelte';
 	import { WordlePoints } from '$lib/types/WordlePoints';
+	import type { InputManager } from '$lib/utils/InputManager';
 	import { onMount } from 'svelte';
 
 	export let usedLetters: Record<string, { validity: WordlePoints }> = {};
@@ -8,7 +11,7 @@
 	let keyboardKeys = [
 		['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
 		['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
-		['z', 'x', 'c', 'v', 'b', 'n', 'm'],
+		['ENTER', 'z', 'x', 'c', 'v', 'b', 'n', 'm', 'BACK'],
 	];
 
 	const colorCss = {
@@ -27,7 +30,11 @@
 		return colorCss[usedLetters[letter].validity];
 	}
 
+	let inputsManager: InputManager;
+
 	onMount(() => {
+		inputsManager = $gameManager.localController.getInputManager();
+
 		$gameManager.when('onLocalWordResult', (result, word) => {
 			[...word].forEach((letter, index) => {
 				if (letter in usedLetters) {
@@ -47,15 +54,32 @@
 
 <div class="flex flex-col items-center gap-2">
 	{#each keyboardKeys as row}
-		<div class="flex justify-center items-center gap-1 md:gap-2">
+		<div class="flex justify-center items-center gap-1 md:gap-2 text-neutral-200">
 			{#each row as letter}
-				<p
-					class="w-8 py-1 flex justify-center items-center bg-neutral-600 rounded-lg font-semibold uppercase text-center {getLetterStyles(
-						letter
-					)}"
-				>
-					<span>{letter}</span>
-				</p>
+				{#if letter === 'BACK'}
+					<button
+						on:click={() => inputsManager.simulateBackspace()}
+						class="w-16 h-[32px] py-1 flex justify-center items-center bg-neutral-900 border border-neutral-500 rounded-lg"
+					>
+						<BackspaceSvg />
+					</button>
+				{:else if letter === 'ENTER'}
+					<button
+						on:click={() => inputsManager.simulateEnterPress()}
+						class="w-16 h-[32px] py-1 flex justify-center items-center bg-neutral-900 border border-neutral-500 rounded-lg"
+					>
+						<CheckSvg />
+					</button>
+				{:else}
+					<button
+						on:click={() => inputsManager.simulateLetterPress(letter)}
+						class="w-8 py-1 flex justify-center items-center bg-neutral-900 border border-neutral-500 rounded-lg font-semibold uppercase text-center {getLetterStyles(
+							letter
+						)}"
+					>
+						<span>{letter}</span>
+					</button>
+				{/if}
 			{/each}
 		</div>
 	{/each}
@@ -63,14 +87,14 @@
 
 <style>
 	.letter-missing {
-		@apply bg-neutral-900 text-neutral-500;
+		@apply bg-neutral-900 text-neutral-500 border-0;
 	}
 
 	.letter-in-word {
-		@apply bg-yellow-700;
+		@apply bg-yellow-700 border-yellow-900;
 	}
 
 	.letter-perfect {
-		@apply bg-green-700;
+		@apply bg-green-700 border-green-900;
 	}
 </style>

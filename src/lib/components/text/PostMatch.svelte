@@ -1,4 +1,5 @@
 <script lang="ts">
+	import HomeSvg from '$lib/svgs/HomeSvg.svelte';
 	import RefreshSvg from '$lib/svgs/RefreshSvg.svelte';
 	import { createEventDispatcher } from 'svelte';
 
@@ -24,12 +25,21 @@
 	<p>The solution was <span class="font-semibold">{solution}</span></p>
 </div>
 
-<div class="my-10 flex flex-col md:flex-row justify-center gap-y-5">
-	<button on:click={rematch} class="mx-auto flex items-center gap-x-2 p-2 border rounded-lg">
-		<RefreshSvg class="w-4 h-4" />
-		Rematch
+<div class="my-10 flex flex-col justify-center items-center gap-y-5">
+	<button
+		title="Rematch"
+		on:click={rematch}
+		class="flex items-center gap-x-2 p-2 border rounded-lg bg-neutral-900"
+	>
+		<RefreshSvg class="w-10" />
 	</button>
-	<button on:click={goToMainMenu} class="mx-auto p-2 border rounded-lg">Main menu</button>
+	<button
+		title="Exit to the main menu"
+		on:click={goToMainMenu}
+		class="p-2 border rounded-lg bg-neutral-900"
+	>
+		<HomeSvg />
+	</button>
 </div>
 
 <style global>

@@ -59,14 +59,14 @@
 				{#if letter === 'BACK'}
 					<button
 						on:click={() => inputsManager.simulateBackspace()}
-						class="w-16 h-[32px] py-1 flex justify-center items-center bg-neutral-900 border border-neutral-500 rounded-lg"
+						class="w-[3.25rem] h-[32px] py-1 flex justify-center items-center bg-neutral-900 border border-neutral-500 rounded-lg"
 					>
 						<BackspaceSvg />
 					</button>
 				{:else if letter === 'ENTER'}
 					<button
 						on:click={() => inputsManager.simulateEnterPress()}
-						class="w-16 h-[32px] py-1 flex justify-center items-center bg-neutral-900 border border-neutral-500 rounded-lg"
+						class="w-[3.25rem] h-[32px] py-1 flex justify-center items-center bg-neutral-900 border border-neutral-500 rounded-lg"
 					>
 						<CheckSvg />
 					</button>

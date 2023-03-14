@@ -4,7 +4,7 @@
 </script>
 
 <header
-	class="py-3 flex items-baseline justify-center text-[40px] font-semibold text-white cursor-default select-none bg-neutral-900"
+	class="py-3 flex items-baseline justify-center text-[40px] font-semibold text-white cursor-default select-none"
 >
 	<div class="flex items-center justify-center">
 		<span class="titleLetter">C</span>
@@ -18,7 +18,7 @@
 	</div>
 
 	<div class="px-5">
-		<HelpSvg class="w-7 my-auto" />
+		<HelpSvg class="w-5 my-auto" />
 	</div>
 </header>
 

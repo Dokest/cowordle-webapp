@@ -110,8 +110,8 @@
 							bind:this={nameInput}
 							bind:value={localPlayerName}
 							disabled={!isEditingName}
-							class="w-full bg-transparent focus:outline-none
-								{isEditingName ? 'border-b' : ''}"
+							class="w-full bg-transparent focus:outline-none border-b
+								{isEditingName ? '' : 'border-b-transparent'}"
 						/>
 
 						<!-- Options -->
@@ -163,18 +163,18 @@
 	</div>
 </div>
 
-<div class="my-5 flex items-center justify-center gap-5">
+<div class="my-10 flex flex-col items-center justify-center gap-2">
 	<button
 		title={isAuth ? 'Start the game!' : 'Only the host can start the game'}
 		disabled={!isAuth}
 		on:click={() => startGame()}
-		class="px-3 py-2 rounded-lg font-semibold cursor-pointer disabled:cursor-default border
+		class="px-7 py-2 rounded-lg font-semibold cursor-pointer disabled:cursor-default border
 			{countdown !== null ? 'border-green-500' : ''}
 			{countdown === null ? 'disabled:border-neutral-500' : ''}
 			{isAuth ? 'bg-neutral-900' : ''}"
 	>
 		<div class="flex items-center gap-x-1">
-			<PlaySvg class="w-5 {countdown === null && !isAuth ? 'text-neutral-500' : ''}" />
+			<PlaySvg class="w-10 {countdown === null && !isAuth ? 'text-neutral-500' : ''}" />
 
 			{#if countdown}
 				Starting in <span class="font-semibold text-green-500 animate-pulse"
@@ -184,21 +184,23 @@
 		</div>
 	</button>
 
-	<button
-		title="Copy & share the room link"
-		on:click={() => copyRoomCode()}
-		class="px-3 py-2 border rounded-lg font-semibold cursor-pointer disabled:cursor-default bg-neutral-900"
-	>
-		{#if roomCodeCopied}
-			<CheckSvg animate={true} />
-		{:else}
-			<ShareSvg />
-		{/if}
-	</button>
+	<div class="flex gap-2">
+		<button
+			title="Copy & share the room link"
+			on:click={() => copyRoomCode()}
+			class="px-3 py-2 border rounded-lg font-semibold cursor-pointer disabled:cursor-default bg-neutral-900"
+		>
+			{#if roomCodeCopied}
+				<CheckSvg animate={true} />
+			{:else}
+				<ShareSvg />
+			{/if}
+		</button>
 
-	<button title="Exit the room" class="px-3 py-2 border rounded-lg bg-neutral-900">
-		<ExitSvg />
-	</button>
+		<button title="Exit the room" class="px-3 py-2 border rounded-lg bg-neutral-900">
+			<ExitSvg />
+		</button>
+	</div>
 
 	<!-- <div class="flex gap-2">
 		<p>Share the room code</p>

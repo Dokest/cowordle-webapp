@@ -1,4 +1,4 @@
-import { PUBLIC_API_URL, PUBLIC_WEBSOCKET_URL } from '$env/static/public';
+import { PUBLIC_API_URL, PUBLIC_WEBSOCKET_URL_INNER_NETWORK } from '$env/static/public';
 import { externalRequest, type RequestFormat } from './externalRequest';
 
 export async function serverRequest<T = unknown>(url: string, options: RequestInit): Promise<RequestFormat<T>> {
@@ -23,5 +23,5 @@ export async function apiRequest<T = unknown>(endpoint: string, options: Request
 }
 
 export async function wsServerRequest<T = unknown>(endpoint: string, options: RequestInit): Promise<RequestFormat<T>> {
-	return serverRequest(`${PUBLIC_WEBSOCKET_URL}${endpoint}`, options);
+	return serverRequest(`${PUBLIC_WEBSOCKET_URL_INNER_NETWORK}${endpoint}`, options);
 }

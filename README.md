@@ -2,6 +2,15 @@
 
 This is the front-end repository for the CoWordle game.
 
+## Starting the server
+
+To build the server: `$ rpm run build`
+
+To start the server: `$ node build/index.js`
+
+To start the websocket server: `# Move to the websocket folder`
+`$ deno task run`
+
 ## Installation
 
 This repository is powered by [SvelteKit](https://kit.svelte.dev/).

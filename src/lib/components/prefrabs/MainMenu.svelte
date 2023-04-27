@@ -22,7 +22,4 @@
 	<a href="/join">
 		<Word word="Join" length={5} showOnlyColors={false} results={[]} />
 	</a>
-	<a href="/faq">
-		<Word word="Help" length={5} showOnlyColors={false} results={[]} />
-	</a>
 </div>

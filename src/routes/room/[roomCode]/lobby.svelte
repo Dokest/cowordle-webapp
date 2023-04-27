@@ -37,7 +37,7 @@
 			countdown! -= 1;
 			console.log(countdown);
 
-			if (countdown === 0) {
+			if (countdown! <= 0) {
 				countdown = null;
 			} else {
 				setTimeout(countdownFn, 1000);
@@ -88,14 +88,14 @@
 </script>
 
 <div>
-	<div class="flex flex-col md:flex-row md:justify-center md:flex-wrap gap-2">
+	<div class="w-[40%] mx-auto flex flex-col gap-2">
 		{#each players as player (player.uuid)}
 			{@const isLocal = $gameManager.isLocalPlayer(player)}
 			{@const isPlayerAuth = $gameManager.isPlayerHost(player)}
 
 			<div class="flex items-center gap-3 font-semibold">
 				<div
-					class="relative w-[90%] md:w-64 px-3 py-2 flex flex-[7] items-center gap-x-1 bg-neutral-900 rounded-lg border
+					class="relative w-full px-3 py-2 flex items-center gap-x-1 bg-neutral-900 rounded-lg border
 							{isLocal ? 'border border-orange-500' : 'border-white'}"
 				>
 					{#if isPlayerAuth}
@@ -155,7 +155,7 @@
 							</svg>
 						</button>
 					{:else}
-						<p>{player.name}</p>
+						<p class="w-full">{player.name}</p>
 					{/if}
 				</div>
 			</div>

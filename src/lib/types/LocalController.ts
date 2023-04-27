@@ -51,9 +51,14 @@ export class LocalController {
 	}
 
 
+	private canAcceptKeyInput(): boolean {
+		return this.acceptsInputs && this.currentWordIndex < this.maxTries;
+	}
+
+
 	private bindKeys(): void {
 		this.inputManager.listen('onLetter', (letter: string) => {
-			if (!this.acceptsInputs) {
+			if (!this.canAcceptKeyInput()) {
 				return;
 			}
 
@@ -69,7 +74,7 @@ export class LocalController {
 		});
 
 		this.inputManager.listen('onBackspace', () => {
-			if (!this.acceptsInputs) {
+			if (!this.canAcceptKeyInput()) {
 				return;
 			}
 
@@ -85,7 +90,7 @@ export class LocalController {
 		});
 
 		this.inputManager.listen('onEnter', async () => {
-			if (!this.acceptsInputs) {
+			if (!this.canAcceptKeyInput()) {
 				return;
 			}
 

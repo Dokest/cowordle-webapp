@@ -7,12 +7,13 @@ const config: UserConfig = {
 	plugins: [sveltekit()],
 	resolve: {
 		alias: {
-			$components: resolve("./src/lib/components/"),
-			$stores: resolve("./src/lib/stores/"),
-			$templates: resolve("./src/lib/templates/"),
-			$utils: resolve("./src/lib/utils/"),
-			$types: resolve("./src/types/"),
-			$styles: resolve("./src/styles"),
+			$lib: resolve(__dirname, "./src/lib/"),
+			$components: resolve(__dirname, "./src/lib/components/"),
+			$stores: resolve(__dirname, "./src/lib/stores/"),
+			$templates: resolve(__dirname, "./src/lib/templates/"),
+			$utils: resolve(__dirname, "./src/lib/utils/"),
+			$types: resolve(__dirname, "./src/types/"),
+			$styles: resolve(__dirname, "./src/styles"),
 		}
 	}
 };

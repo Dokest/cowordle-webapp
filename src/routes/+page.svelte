@@ -1,31 +1,25 @@
 <script lang="ts">
-	import Word from '$components/prefrabs/Word.svelte';
+	import LoadingParty from '$components/prefrabs/LoadingParty.svelte';
+	import MainMenu from '$components/prefrabs/MainMenu.svelte';
+	import { onMount } from 'svelte';
 
-	const playersNum = 5;
-	let playerName: string | undefined = undefined;
-	let menu: 'name-selection' | 'multiplayer-mode' = 'name-selection';
-	let partyCode: string = '';
+	let showLoadingScreen = false;
 
-	function advance(): void {
-		switch (menu) {
-			case 'name-selection':
-				menu = 'multiplayer-mode';
-				break;
-		}
-	}
+	onMount(() => {
+		// const socket = $ws();
+		// console.log(socket);
+		// socket.emit('message', 'Hello!');
+		// socket.on('serverMessage', (data) => {
+		// 	console.log('Server says: ', data);
+		// });
+	});
 </script>
 
-<div class="mt-10 flex flex-col items-center gap-5">
-	<a href="/create">
-		<Word word="Host" length={5} />
-	</a>
-	<a href="/join">
-		<Word word="Join" length={5} />
-	</a>
-	<a href="/faq">
-		<Word word="Help" length={5} />
-	</a>
-</div>
+{#if showLoadingScreen}
+	<LoadingParty />
+{:else}
+	<MainMenu />
+{/if}
 
 <!--
 <div class="w-[80%] md:w-full h-full mx-auto mt-52 flex justify-center">

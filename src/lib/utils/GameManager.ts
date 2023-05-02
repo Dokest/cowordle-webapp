@@ -3,6 +3,7 @@ import type { InitialPlayerInfoDto } from '$lib/dtos/PlayerDto';
 import type { LocalController } from '$lib/types/LocalController';
 import type { Player } from '$lib/types/Player';
 import type { Uuid } from '$lib/types/Uuid';
+import { WordlePoints } from '$lib/types/WordlePoints';
 import type { WebsocketConnection } from '$lib/ws/websockets';
 import { Emitter } from './Emitter';
 import { GameNotifies } from './GameNotifies';
@@ -24,7 +25,7 @@ export class GameManager {
 	async connectToRoom(): Promise<void> {
 		this.bindSocketEvents();
 
-		const { localPlayer, players, hostPlayer } = await this.socket.dialogue('setup', {
+		const { localPlayer, players, hostPlayer, roomState } = await this.socket.dialogue('setup', {
 			playerName: this.localPlayer.name,
 			roomCode: this.roomCode,
 		});
@@ -85,6 +86,12 @@ export class GameManager {
 				roomCode: this.roomCode,
 			});
 
+			[...result.result].forEach((letterResult, index) => {
+				if (letterResult === WordlePoints.Exact) {
+					this.localController.addKnownLetter(word[index], index);
+				}
+			});
+
 			this.notifies.onLocalWordResult.broadcast(result.result, word);
 
 			this.localController.toggleInputs(true);
@@ -96,6 +103,7 @@ export class GameManager {
 			name: player.name,
 			uuid: player.uuid as Uuid,
 			connectionTimestamp: player.connectionTimestamp,
+			tries: [],
 		};
 
 		const playerExists = this.players.find((existingPlayer) => existingPlayer.uuid === player.uuid);
@@ -181,6 +189,17 @@ export class GameManager {
 
 		this.socket.on('player_word', ({ playerUuid, result }) => {
 			console.log(`Player ${playerUuid} got [${result.join(', ')}]`);
+
+			const player = this.players.find((player) => player.uuid === playerUuid);
+
+			if (!player) {
+				console.error("INVALID PLAYER");
+				return;
+			}
+
+			player.tries = [...player.tries, result];
+
+			this.notifies.onPlayerWord.broadcast(player, result);
 		});
 
 		this.socket.on('player_win', ({ playerUuid, solution }) => {
@@ -199,6 +218,12 @@ export class GameManager {
 		});
 
 		this.socket.on('start_prematch', ({ start_time }) => {
+			this.players.forEach(player => player.tries = []);
+
+			if (start_time === null) {
+				start_time = Date.now();
+			}
+
 			this.notifies.gameStarts.broadcast(this.players, start_time);
 		});
 	}
@@ -207,7 +232,7 @@ export class GameManager {
 	closeGame(): void {
 		this.clearOldMatch();
 
-		this.socket.disconnect();
+		//this.socket.disconnect();
 	}
 
 

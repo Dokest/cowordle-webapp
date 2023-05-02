@@ -4,6 +4,10 @@ import type { Uuid } from '$lib/types/Uuid';
 import type { WordlePoints } from '$lib/types/WordlePoints';
 import ioClient, { Socket } from 'socket.io-client';
 
+
+export type RoomState = 'LOBBY' | 'IN-GAME';
+
+
 export type WebSocketDialogueEvent = {
 	ping: () => void;
 	message: (message: string) => string;
@@ -11,6 +15,7 @@ export type WebSocketDialogueEvent = {
 		players: InitialPlayerInfoDto[];
 		hostPlayer: InitialPlayerInfoDto;
 		localPlayer: InitialPlayerInfoDto;
+		roomState: RoomState;
 	};
 	validate_word: (arsgs: { roomCode: string, playerUuid: string, word: string }) => {
 		result: WordlePoints[];
@@ -39,7 +44,7 @@ export type WebsocketInEvent = {
 	};
 	on_start_game: void;
 	start_prematch: {
-		start_time: number;
+		start_time: number | null;
 	};
 	player_word: {
 		playerUuid: string;
@@ -126,6 +131,10 @@ export class WebsocketConnection {
 
 	disconnect() {
 		this.socket.disconnect();
+	}
+
+	getWebsocketSocket(): Socket<any, any> {
+		return this.socket;
 	}
 
 	private bindEvents(): void {

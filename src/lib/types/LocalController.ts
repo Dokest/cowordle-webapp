@@ -16,9 +16,12 @@ export class LocalController {
 
 	connectionTimestamp = 0;
 
+	private knownLetters: (string | null)[] = [];
+
 
 	constructor(private inputManager: InputManager, private maxTries: number, private wordLength: number) {
 		this.wordTries.length = this.maxTries;
+		this.knownLetters.length = this.wordLength;
 		this.clearInputs();
 
 		this.bindKeys();
@@ -32,6 +35,7 @@ export class LocalController {
 	clearInputs(): void {
 		this.currentWordIndex = 0;
 		this.wordTries = this.wordTries.fill('', 0, this.maxTries);
+		this.knownLetters = this.knownLetters.fill(null, 0, this.wordLength);
 	}
 
 
@@ -42,12 +46,28 @@ export class LocalController {
 
 	clearOldData(): void {
 		this.wordTries = this.wordTries.fill('', 0, this.maxTries);
+		this.knownLetters = this.knownLetters.fill(null, 0, this.wordLength);
 		this.currentWordIndex = 0;
 	}
 
 
 	getInputManager(): InputManager {
 		return this.inputManager;
+	}
+
+
+	getLastTry(): string {
+		return this.wordTries[this.currentWordIndex];
+	}
+
+	addKnownLetter(letter: string, index: number): void {
+		this.knownLetters[index] = letter;
+	}
+
+	getKnownLettersFormatted(): string {
+		return [...this.knownLetters]
+			.map((letter) => letter === null ? '?' : letter)
+			.join('');
 	}
 
 

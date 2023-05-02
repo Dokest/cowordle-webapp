@@ -51,7 +51,7 @@
 >
 	{#each letters as letter, index}
 		<Letter
-			char={showOnlyColors ? '' : letter}
+			char={showOnlyColors ? '?' : letter}
 			result={results ? results[index] : null}
 			class="group-hover:border-orange-500"
 		/>

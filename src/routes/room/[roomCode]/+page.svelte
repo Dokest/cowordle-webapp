@@ -45,7 +45,7 @@
 	onMount(() => {
 		const localPlayer = new LocalController(new InputManager(), MAX_TRIES, 5);
 
-		ws.restart();
+		ws.init();
 
 		const randomPlayerName = generateRandomName();
 		gameManager.set(new GameManager(roomCode, localPlayer, $ws, randomPlayerName));

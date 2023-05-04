@@ -130,7 +130,9 @@ export class WebsocketConnection {
 	}
 
 	disconnect() {
-		this.socket.disconnect();
+		if (!this.socket.disconnected) {
+			this.socket.disconnect();
+		}
 	}
 
 	getWebsocketSocket(): Socket<any, any> {

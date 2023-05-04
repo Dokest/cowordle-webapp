@@ -9,14 +9,22 @@ function handleConnection() {
 function createWebSocketStore() {
 	console.log('CREATING SOCKET');
 
-	const socket = handleConnection();
+	// const socket = handleConnection();
 
-	const { subscribe } = writable(socket);
+	const { subscribe, update } = writable<WebsocketConnection>(undefined);
 
 	return {
 		subscribe,
-		restart: () => {
-			ws = createWebSocketStore()
+		init: () => {
+			update((socket) => {
+				// if (socket) {
+				// 	socket.disconnect();
+				// }
+				console.log('> Creating new socket');
+
+
+				return handleConnection();
+			});
 		},
 	};
 }

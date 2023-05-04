@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { gameManager } from '$lib/stores/gameManagerStore';
 	import CheckSvg from '$lib/svgs/CheckSvg.svelte';
 	import CrownSvg from '$lib/svgs/CrownSvg.svelte';
@@ -84,6 +85,11 @@
 
 	function startGame(): void {
 		$gameManager.startGame();
+	}
+
+	function exitGame(): void {
+		$gameManager.closeGame();
+		goto('/');
 	}
 </script>
 
@@ -197,7 +203,11 @@
 			{/if}
 		</button>
 
-		<button title="Exit the room" class="px-3 py-2 border rounded-lg bg-neutral-900">
+		<button
+			title="Exit the room"
+			class="px-3 py-2 border rounded-lg bg-neutral-900"
+			on:click={exitGame}
+		>
 			<ExitSvg />
 		</button>
 	</div>

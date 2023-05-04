@@ -7,13 +7,18 @@ function handleConnection() {
 }
 
 function createWebSocketStore() {
+	console.log('CREATING SOCKET');
+
 	const socket = handleConnection();
 
 	const { subscribe } = writable(socket);
 
 	return {
 		subscribe,
+		restart: () => {
+			ws = createWebSocketStore()
+		},
 	};
 }
 
-export const ws = createWebSocketStore();
+export let ws = createWebSocketStore();

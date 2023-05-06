@@ -36,6 +36,7 @@
 		isLocalPlayer: false,
 		name: '',
 		solution: '',
+		isLost: false,
 	};
 
 	let lobby: Lobby;
@@ -78,9 +79,21 @@
 		$gameManager.when('onPlayerWin', (localPlayerWinner, winnerName, solution) => {
 			$gameManager.getLocalController().toggleInputs(false);
 
-			winnerData.isLocalPlayer = localPlayerWinner;
+			winnerData.isLost = false;
 			winnerData.name = winnerName;
 			winnerData.solution = solution;
+			winnerData.isLocalPlayer = localPlayerWinner;
+
+			roomState = 'post-match';
+		});
+
+		$gameManager.when('onMatchLost', (solution) => {
+			$gameManager.getLocalController().toggleInputs(false);
+
+			winnerData.isLost = true;
+			winnerData.name = '';
+			winnerData.solution = solution;
+			winnerData.isLocalPlayer = false;
 
 			roomState = 'post-match';
 		});
@@ -174,6 +187,8 @@
 			isLocalWinner={winnerData.isLocalPlayer}
 			winnerName={winnerData.name}
 			solution={winnerData.solution}
+			isLost={winnerData.isLost}
+			accumulatedKnowledge={[]}
 			on:rematch={rematch}
 			on:goToMainMenu={backToMainMenu}
 		/>

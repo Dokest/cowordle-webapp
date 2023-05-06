@@ -205,16 +205,21 @@ export class GameManager {
 		this.socket.on('player_win', ({ playerUuid, solution }) => {
 			console.log(`Player ${playerUuid} WON`);
 
-			const isLocalWinner = this.localPlayer.uuid === playerUuid;
+			if (playerUuid === null) {
+				this.notifies.onMatchLost.broadcast(solution);
+			} else {
+				const isLocalWinner = this.localPlayer.uuid === playerUuid;
 
-			const winnerPlayer = this.players.find((player) => player.uuid === playerUuid);
+				const winnerPlayer = this.players.find((player) => player.uuid === playerUuid);
 
-			if (!winnerPlayer) {
-				console.error('No winner player found (?)');
-				return;
+				if (!winnerPlayer) {
+					console.error('No winner player found (?)');
+					return;
+				}
+
+				this.notifies.onPlayerWin.broadcast(isLocalWinner, winnerPlayer.name, solution);
 			}
 
-			this.notifies.onPlayerWin.broadcast(isLocalWinner, winnerPlayer.name, solution);
 		});
 
 		this.socket.on('start_prematch', ({ start_time }) => {

@@ -51,7 +51,7 @@ export type WebsocketInEvent = {
 		result: WordlePoints[];
 	};
 	player_win: {
-		playerUuid: string;
+		playerUuid: string | null;
 		solution: string;
 	};
 };

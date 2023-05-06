@@ -4,7 +4,7 @@
 	import CheckSvg from '$lib/svgs/CheckSvg.svelte';
 	import CrownSvg from '$lib/svgs/CrownSvg.svelte';
 	import EditSvg from '$lib/svgs/EditSvg.svelte';
-	import ExitSvg from '$lib/svgs/ExitSvg.svelte';
+	import HomeSvg from '$lib/svgs/HomeSvg.svelte';
 	import PlaySvg from '$lib/svgs/PlaySvg.svelte';
 	import ShareSvg from '$lib/svgs/ShareSvg.svelte';
 	import type { Player } from '$lib/types/Player';
@@ -208,7 +208,7 @@
 			class="px-3 py-2 border rounded-lg bg-neutral-900"
 			on:click={exitGame}
 		>
-			<ExitSvg />
+			<HomeSvg />
 		</button>
 	</div>
 

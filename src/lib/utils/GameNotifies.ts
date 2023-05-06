@@ -10,6 +10,7 @@ export class GameNotifies {
 	onLocalWordResult: Emitter<(result: WordlePoints[], word: string) => void> = new Emitter();
 	onPlayerWin: Emitter<(isLocalPlayer: boolean, winnerName: string, solution: string) => void> = new Emitter();
 	onPlayerWord: Emitter<(player: Player, result: WordlePoints[]) => void> = new Emitter();
+	onMatchLost: Emitter<(solution: string) => void> = new Emitter();
 
 	unbindAll(): void {
 		Object.values(this).forEach((property) => {

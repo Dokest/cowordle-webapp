@@ -4,6 +4,8 @@ import type { LocalController } from '$lib/types/LocalController';
 import type { Player } from '$lib/types/Player';
 import type { Uuid } from '$lib/types/Uuid';
 import { WordlePoints } from '$lib/types/WordlePoints';
+import { EN_WORDS } from '$lib/words/en_words';
+import { ES_WORDS } from '$lib/words/es_words';
 import type { WebsocketConnection } from '$lib/ws/websockets';
 import { Emitter } from './Emitter';
 import { GameNotifies } from './GameNotifies';
@@ -69,10 +71,9 @@ export class GameManager {
 		}
 	}
 
-	startGame(): void {
+	startGame(wordListId: string): void {
 		this.socket.emit('start_game', {
-			playerUuid: this.localPlayer.uuid,
-			roomCode: this.roomCode,
+			wordListId,
 		});
 	}
 
@@ -222,14 +223,29 @@ export class GameManager {
 
 		});
 
-		this.socket.on('start_prematch', ({ start_time }) => {
-			this.players.forEach(player => player.tries = []);
+		this.socket.on('start_prematch', ({ startTime, wordListId }) => {
+			let words: string[];
 
-			if (start_time === null) {
-				start_time = Date.now();
+			switch (wordListId) {
+				case "es_words":
+					words = ES_WORDS;
+					break;
+				default:
+					words = EN_WORDS;
+					break;
 			}
 
-			this.notifies.gameStarts.broadcast(this.players, start_time);
+			console.log('USING ', wordListId);
+
+			this.localController.setWordList(words);
+
+			this.players.forEach(player => player.tries = []);
+
+			if (startTime === null) {
+				startTime = Date.now();
+			}
+
+			this.notifies.gameStarts.broadcast(this.players, startTime);
 		});
 	}
 

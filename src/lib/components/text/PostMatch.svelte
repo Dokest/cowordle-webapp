@@ -20,6 +20,10 @@
 		accumulatedKnowledge = [...letters].map((letter) => {
 			return letter === '?' ? WordlePoints.Missing : WordlePoints.Exact;
 		});
+
+		if (isLocalWinner) {
+			accumulatedKnowledge = accumulatedKnowledge.map(() => WordlePoints.Exact);
+		}
 	});
 
 	function rematch(): void {

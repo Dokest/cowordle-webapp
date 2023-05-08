@@ -1,6 +1,5 @@
 import { Emitter } from '$lib/utils/Emitter';
 import type { InputManager } from '$lib/utils/InputManager';
-import { EN_WORDS } from '$lib/words/en_words';
 
 
 export class LocalController {
@@ -17,6 +16,8 @@ export class LocalController {
 	connectionTimestamp = 0;
 
 	private knownLetters: (string | null)[] = [];
+
+	private wordList: string[] = [];
 
 
 	constructor(private inputManager: InputManager, private maxTries: number, private wordLength: number) {
@@ -68,6 +69,10 @@ export class LocalController {
 		return [...this.knownLetters]
 			.map((letter) => letter === null ? '?' : letter)
 			.join('');
+	}
+
+	setWordList(words: string[]): void {
+		this.wordList = words;
 	}
 
 
@@ -125,7 +130,7 @@ export class LocalController {
 			}
 
 			if (this.currentWordIndex < this.maxTries) {
-				if (EN_WORDS.includes(currentWord)) {
+				if (this.wordList.includes(currentWord)) {
 					await this.onSendWord.broadcastAsync(currentWord);
 
 					this.currentWordIndex++;

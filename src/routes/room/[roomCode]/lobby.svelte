@@ -14,6 +14,7 @@
 	let nameInput: HTMLInputElement;
 	let roomCodeCopied = false;
 	let countdown: number | null = null;
+	let wordListId: string = 'en_words';
 
 	$gameManager.when('playersUpdated', (updatedPlayers) => {
 		players = updatedPlayers;
@@ -84,7 +85,7 @@
 	}
 
 	function startGame(): void {
-		$gameManager.startGame();
+		$gameManager.startGame(wordListId);
 	}
 
 	function exitGame(): void {
@@ -94,7 +95,7 @@
 </script>
 
 <div>
-	<div class="w-[40%] mx-auto flex flex-col gap-2">
+	<div class="w-[90%] md:w-[40%] mx-auto flex flex-col gap-2">
 		{#each players as player (player.uuid)}
 			{@const isLocal = $gameManager.isLocalPlayer(player)}
 			{@const isPlayerAuth = $gameManager.isPlayerHost(player)}
@@ -210,6 +211,20 @@
 		>
 			<HomeSvg />
 		</button>
+	</div>
+
+	<div class="my-14 w-[90%] flex flex-col items-center gap-y-2">
+		<h2 class="mx-auto font-semibold">SETTINGS</h2>
+		<div class="w-full flex justify-around items-center">
+			<p>Word list</p>
+			<select
+				bind:value={wordListId}
+				class="px-2 py-1 border border-neutral-200 bg-transparent font-semibold rounded-lg focus:rounded-b-none transition-[border-radius]"
+			>
+				<option value="en_words" class="text-black font-semibold">English</option>
+				<option value="es_words" class="text-black font-semibold">Español</option>
+			</select>
+		</div>
 	</div>
 
 	<!-- <div class="flex gap-2">

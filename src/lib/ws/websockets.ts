@@ -44,7 +44,8 @@ export type WebsocketInEvent = {
 	};
 	on_start_game: void;
 	start_prematch: {
-		start_time: number | null;
+		startTime: number | null;
+		wordListId: string;
 	};
 	player_word: {
 		playerUuid: string;
@@ -72,8 +73,7 @@ export type WebsocketOutEvent = {
 		requestingPlayerUuid: Uuid;
 	};
 	start_game: {
-		playerUuid: Uuid;
-		roomCode: string;
+		wordListId: string;
 	};
 };
 

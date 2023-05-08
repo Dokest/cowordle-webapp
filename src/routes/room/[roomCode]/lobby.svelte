@@ -213,19 +213,21 @@
 		</button>
 	</div>
 
-	<div class="my-14 w-[90%] flex flex-col items-center gap-y-2">
-		<h2 class="mx-auto font-semibold">SETTINGS</h2>
-		<div class="w-full flex justify-around items-center">
-			<p>Word list</p>
-			<select
-				bind:value={wordListId}
-				class="px-2 py-1 border border-neutral-200 bg-transparent font-semibold rounded-lg focus:rounded-b-none transition-[border-radius]"
-			>
-				<option value="en_words" class="text-black font-semibold">English</option>
-				<option value="es_words" class="text-black font-semibold">Español</option>
-			</select>
+	{#if isAuth}
+		<div class="my-14 w-[90%] flex flex-col items-center gap-y-2">
+			<h2 class="mx-auto font-semibold">SETTINGS</h2>
+			<div class="w-full flex justify-around items-center">
+				<p>Word list</p>
+				<select
+					bind:value={wordListId}
+					class="px-2 py-1 border border-neutral-200 bg-transparent font-semibold rounded-lg focus:rounded-b-none transition-[border-radius]"
+				>
+					<option value="en_words" class="text-black font-semibold">English</option>
+					<option value="es_words" class="text-black font-semibold">Español</option>
+				</select>
+			</div>
 		</div>
-	</div>
+	{/if}
 
 	<!-- <div class="flex gap-2">
 		<p>Share the room code</p>

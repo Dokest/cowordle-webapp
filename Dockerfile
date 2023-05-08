@@ -10,6 +10,7 @@ COPY package-lock.json ./
 RUN npm install
 RUN npm i -g vite
 COPY . ./
+COPY .env.prod .env
 RUN npm run build
 
 

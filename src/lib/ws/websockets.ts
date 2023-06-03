@@ -1,4 +1,4 @@
-import { PUBLIC_WEBSOCKET_URL } from '$env/static/public';
+import { PUBLIC_WS_PORT } from '$env/static/public';
 import type { InitialPlayerInfoDto } from '$lib/dtos/PlayerDto';
 import type { Uuid } from '$lib/types/Uuid';
 import type { WordlePoints } from '$lib/types/WordlePoints';
@@ -85,7 +85,9 @@ export class WebsocketConnection {
 	private pingCallbacks: (() => void)[] = [];
 
 	constructor() {
-		this.socket = ioClient(PUBLIC_WEBSOCKET_URL, {
+		const domain = window.location.hostname;
+
+		this.socket = ioClient(`${domain}:${PUBLIC_WS_PORT}`, {
 			autoConnect: true,
 			withCredentials: true,
 		});

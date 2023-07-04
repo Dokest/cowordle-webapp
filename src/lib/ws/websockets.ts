@@ -1,9 +1,9 @@
+import { env } from '$env/dynamic/public';
 import { PUBLIC_WS_PORT } from '$env/static/public';
 import type { InitialPlayerInfoDto } from '$lib/dtos/PlayerDto';
 import type { Uuid } from '$lib/types/Uuid';
 import type { WordlePoints } from '$lib/types/WordlePoints';
 import ioClient, { Socket } from 'socket.io-client';
-
 
 export type RoomState = 'LOBBY' | 'IN-GAME';
 
@@ -17,7 +17,7 @@ export type WebSocketDialogueEvent = {
 		localPlayer: InitialPlayerInfoDto;
 		roomState: RoomState;
 	};
-	validate_word: (arsgs: { roomCode: string, playerUuid: string, word: string }) => {
+	validate_word: (args: { roomCode: string, playerUuid: string, word: string }) => {
 		result: WordlePoints[];
 	};
 };
@@ -31,9 +31,11 @@ export type WebsocketInEvent = {
 	initial_local_info: {
 		uuid: string,
 	};
+
 	player_connected: {
 		newPlayer: InitialPlayerInfoDto;
 	};
+
 	player_disconnected: {
 		playerUuid: Uuid;
 		reason: string;
@@ -77,7 +79,7 @@ export type WebsocketOutEvent = {
 	};
 };
 
-export type EventName<T> = keyof T;
+export type EventName<T> = keyof T & string;
 
 export class WebsocketConnection {
 	private readonly socket: Socket;
@@ -85,7 +87,7 @@ export class WebsocketConnection {
 	private pingCallbacks: (() => void)[] = [];
 
 	constructor() {
-		const domain = window.location.hostname;
+		const domain = env.PUBLIC_WEBSOCKET_URL || 'localhost';
 
 		this.socket = ioClient(`${domain}:${PUBLIC_WS_PORT}`, {
 			autoConnect: true,

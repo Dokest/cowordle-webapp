@@ -26,7 +26,7 @@
 
 	<div class="">
 		<label for="code_input">
-			<Word bind:word={code} length={6} results={[]} showOnlyColors={false} />
+			<Word bind:word={code} length={6} />
 		</label>
 
 		<input

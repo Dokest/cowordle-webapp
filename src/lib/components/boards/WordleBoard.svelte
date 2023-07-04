@@ -3,17 +3,15 @@
 	import type { WordlePoints } from '$lib/types/WordlePoints';
 	import Word from '../prefrabs/Word.svelte';
 
-	// export let currentWord: string = '';
-	// export let previousWords: string[] = [];
 	export let wordLength: number;
 	export let showOnlyColors: boolean;
 
 	export let tries: string[];
 
-	let results: WordlePoints[][] = [];
+	let boardResults: WordlePoints[][] = [];
 
 	$gameManager.when('onLocalWordResult', (result) => {
-		results = [...results, result];
+		boardResults = [...boardResults, result];
 	});
 </script>
 
@@ -23,7 +21,7 @@
 			length={wordLength}
 			word={playerTry}
 			{showOnlyColors}
-			bind:results={results[index]}
+			results={boardResults[index]}
 			{index}
 		/>
 	{/each}

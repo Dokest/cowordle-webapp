@@ -33,6 +33,10 @@
 	let inputsManager: InputManager;
 
 	onMount(() => {
+		if (!$gameManager) {
+			return;
+		}
+
 		inputsManager = $gameManager.localController.getInputManager();
 
 		$gameManager.when('onLocalWordResult', (result, word) => {
@@ -76,6 +80,7 @@
 						class="w-8 py-1 flex justify-center items-center bg-neutral-900 border border-neutral-500 rounded-lg font-semibold uppercase text-center {getLetterStyles(
 							letter
 						)}"
+						data-testid={`letter_${letter}`}
 					>
 						<span>{letter}</span>
 					</button>

@@ -27,7 +27,7 @@ export class GameManager {
 	async connectToRoom(): Promise<void> {
 		this.bindSocketEvents();
 
-		const { localPlayer, players, hostPlayer, roomState } = await this.socket.dialogue('setup', {
+		const { localPlayer, players, hostPlayer } = await this.socket.dialogue('setup', {
 			playerName: this.localPlayer.name,
 			roomCode: this.roomCode,
 		});
@@ -93,6 +93,8 @@ export class GameManager {
 				}
 			});
 
+			console.log('GM', result.result);
+
 			this.notifies.onLocalWordResult.broadcast(result.result, word);
 
 			this.localController.toggleInputs(true);
@@ -152,7 +154,7 @@ export class GameManager {
 	}
 
 	private bindSocketEvents(): void {
-		console.log('BINDING EVENTS');
+		console.log('Binding GameManager events');
 
 		this.socket.on('player_connected', ({ newPlayer }) => {
 			this.addPlayer(newPlayer);

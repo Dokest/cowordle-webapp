@@ -15,6 +15,10 @@
 	const events = createEventDispatcher();
 
 	onMount(() => {
+		if (!$gameManager) {
+			return;
+		}
+
 		const letters = $gameManager.getLocalController().getKnownLettersFormatted();
 
 		accumulatedKnowledge = [...letters].map((letter) => {

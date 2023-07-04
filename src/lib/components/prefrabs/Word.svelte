@@ -5,8 +5,8 @@
 
 	export let word: string | null;
 	export let length: number;
-	export let showOnlyColors: boolean;
-	export let results: WordlePoints[];
+	export let showOnlyColors: boolean = false;
+	export let results: WordlePoints[] = [];
 	export let index: number = -1;
 
 	let letters: (string | null)[] = [];
@@ -34,7 +34,6 @@
 			const wordDiv = document.getElementById(`word_${index}`);
 
 			if (index === wordIndex && wordDiv && !wordDiv.classList.contains('show-error')) {
-				console.log('FIAL');
 				wordDiv.classList.add('show-error');
 
 				setTimeout(() => {

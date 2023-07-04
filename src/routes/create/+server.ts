@@ -1,5 +1,5 @@
-import { wsServerRequest } from '$lib/utils/apiRequest';
 import { json } from '@sveltejs/kit';
+import { wsServerRequest } from '../../lib/utils/apiRequest';
 
 
 export async function POST(): Promise<Response> {

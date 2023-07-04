@@ -7,10 +7,6 @@ export interface RequestFormat<T> {
 	data?: T;
 }
 
-export async function externalRequest<T = unknown>(url: string, options: RequestInit): Promise<Response> {
-	return await fetch(url, options)
-		.catch(() => new Response('', {
-			status: 503,
-			statusText: 'Network failure',
-		}));
+export async function externalRequest(url: string, options: RequestInit): Promise<Response> {
+	return fetch(url, options);
 }

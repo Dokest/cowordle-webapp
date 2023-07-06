@@ -7,7 +7,7 @@ import { WordlePoints } from '$lib/types/WordlePoints';
 import { EN_WORDS } from '$lib/words/en_words';
 import { ES_WORDS_COMPLETE_LIST } from '$lib/words/es_word_list';
 import { ES_WORDS } from '$lib/words/es_words';
-import type { WebsocketConnection } from '$lib/ws/websockets';
+import type { RoomState, WebsocketConnection } from '$lib/ws/websockets';
 import { Emitter } from './Emitter';
 import { GameNotifies } from './GameNotifies';
 
@@ -27,10 +27,10 @@ export class GameManager {
 	}
 
 
-	async connectToRoom(): Promise<void> {
+	async connectToRoom(): Promise<RoomState> {
 		this.bindSocketEvents();
 
-		const { localPlayer, players, hostPlayer } = await this.socket.dialogue('setup', {
+		const { localPlayer, players, hostPlayer, roomState } = await this.socket.dialogue('setup', {
 			playerName: this.localPlayer.name,
 			roomCode: this.roomCode,
 		});
@@ -45,6 +45,8 @@ export class GameManager {
 		this.notifies.playersUpdated.broadcast(this.players);
 
 		this.prepareSendingWords();
+
+		return roomState;
 	}
 
 
@@ -198,12 +200,6 @@ export class GameManager {
 			this.players = this.players.filter((player) => player.uuid !== playerUuid);
 
 			this.notifies.playersUpdated.broadcast(this.players);
-		});
-
-		this.socket.on('on_start_game', () => {
-			// console.log('ON START GAME');
-
-			// this.notifies.gameStarts.broadcast(this.players);
 		});
 
 		this.socket.on('player_word', ({ playerUuid, result }) => {

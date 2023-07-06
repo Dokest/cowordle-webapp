@@ -10,6 +10,8 @@
 	import type { Player } from '$lib/types/Player';
 	import { QRCodeImage } from 'svelte-qrcode-image';
 
+	export let gameHasAlreadyStarted: boolean;
+
 	let localPlayerName = $gameManager.getLocalPlayer().name;
 	let isEditingName: boolean = false;
 	let nameInput: HTMLInputElement;
@@ -192,6 +194,17 @@
 		{/each}
 	</div>
 </div>
+
+{#if gameHasAlreadyStarted}
+	<div class="flex flex-col items-center">
+		<div
+			class="w-auto mt-5 px-3 py-2 text-center border border-red-500 rounded-lg font-semibold text-red-500 bg-neutral-900"
+		>
+			<p>Game is in progress</p>
+			<p>Wait for the current match to end</p>
+		</div>
+	</div>
+{/if}
 
 <div class="my-10 flex flex-col items-center justify-center gap-2">
 	<button

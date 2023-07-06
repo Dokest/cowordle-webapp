@@ -21,6 +21,7 @@
 	const roomCode: string = $page.params['roomCode'];
 
 	let roomState: 'loading' | 'lobby' | 'in-game' | 'post-match' = 'loading';
+	let gameHasAlreadyStarted = false;
 
 	if (!roomCode) {
 		goto('/error?e=missing-roomcode');
@@ -51,8 +52,10 @@
 		const randomPlayerName = localStorage.getItem('playerName') || generateRandomName();
 		gameManager.set(new GameManager(roomCode, localPlayer, $ws, randomPlayerName));
 
-		$gameManager.connectToRoom().then(() => {
+		$gameManager.connectToRoom().then((currentRoomState) => {
 			roomState = 'lobby';
+
+			gameHasAlreadyStarted = currentRoomState === 'IN-GAME';
 		});
 
 		prepareGame();
@@ -93,6 +96,7 @@
 			winnerData.isLocalPlayer = localPlayerWinner;
 
 			roomState = 'post-match';
+			gameHasAlreadyStarted = false;
 		});
 
 		$gameManager.when('onMatchLost', (solution) => {
@@ -104,6 +108,7 @@
 			winnerData.isLocalPlayer = false;
 
 			roomState = 'post-match';
+			gameHasAlreadyStarted = false;
 		});
 
 		$gameManager.when('onPlayerWord', (player, result) => {
@@ -159,7 +164,7 @@
 	{#if roomState === 'loading'}
 		<LoadingParty />
 	{:else if roomState === 'lobby'}
-		<Lobby bind:this={lobby} />
+		<Lobby bind:this={lobby} {gameHasAlreadyStarted} />
 	{:else if roomState === 'in-game'}
 		<div class="w-full md:w-96 mx-auto">
 			<WordleBoard {tries} wordLength={5} showOnlyColors={false} />

@@ -1,6 +1,11 @@
 import { Emitter } from '$lib/utils/Emitter';
 import type { InputManager } from '$lib/utils/InputManager';
 
+export interface WordListData {
+	validWords: string[];
+	selectableWords: string[]
+}
+
 
 export class LocalController {
 	wordTries: string[] = [];
@@ -17,7 +22,10 @@ export class LocalController {
 
 	private knownLetters: (string | null)[] = [];
 
-	private wordList: string[] = [];
+	private wordList: WordListData = {
+		selectableWords: [],
+		validWords: [],
+	};
 
 
 	constructor(private inputManager: InputManager, private maxTries: number, private wordLength: number) {
@@ -61,9 +69,11 @@ export class LocalController {
 		return this.wordTries[this.currentWordIndex];
 	}
 
+
 	addKnownLetter(letter: string, index: number): void {
 		this.knownLetters[index] = letter;
 	}
+
 
 	getKnownLettersFormatted(): string {
 		return [...this.knownLetters]
@@ -71,8 +81,9 @@ export class LocalController {
 			.join('');
 	}
 
-	setWordList(words: string[]): void {
-		this.wordList = words;
+
+	setWordList(lists: WordListData): void {
+		this.wordList = lists;
 	}
 
 
@@ -130,7 +141,9 @@ export class LocalController {
 			}
 
 			if (this.currentWordIndex < this.maxTries) {
-				if (this.wordList.includes(currentWord)) {
+				console.log('Trying word: ', this.wordList.validWords.includes(currentWord), currentWord);
+
+				if (this.wordList.validWords.includes(currentWord)) {
 					await this.onSendWord.broadcastAsync(currentWord);
 
 					this.currentWordIndex++;

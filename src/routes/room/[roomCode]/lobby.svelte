@@ -8,6 +8,7 @@
 	import PlaySvg from '$lib/svgs/PlaySvg.svelte';
 	import ShareSvg from '$lib/svgs/ShareSvg.svelte';
 	import type { Player } from '$lib/types/Player';
+	import { QRCodeImage } from 'svelte-qrcode-image';
 
 	let localPlayerName = $gameManager.getLocalPlayer().name;
 	let isEditingName: boolean = false;
@@ -15,6 +16,8 @@
 	let roomCodeCopied = false;
 	let countdown: number | null = null;
 	let wordListId: string = 'en_words';
+	let showQrCode = false;
+	let qrSize = 200;
 
 	$gameManager.when('playersUpdated', (updatedPlayers) => {
 		players = updatedPlayers;
@@ -24,7 +27,12 @@
 		players = $gameManager.getPlayers();
 	});
 
-	const isAuth = $gameManager.isLocalHost();
+	$gameManager.when('onHostChange', (host) => {
+		isAuth = $gameManager.isLocalHost();
+		players = players;
+	});
+
+	let isAuth = $gameManager.isLocalHost();
 
 	let players: Player[] = [];
 
@@ -92,10 +100,25 @@
 		$gameManager.closeGame();
 		goto('/');
 	}
+
+	function increaseQrSize(extraSize = 50): void {
+		qrSize = Math.min(1000, qrSize + extraSize);
+	}
+
+	function decreaseQrSize(reduceSize = 50): void {
+		qrSize = Math.max(200, qrSize - reduceSize);
+	}
 </script>
 
 <div>
 	<div class="w-[90%] md:w-[40%] mx-auto flex flex-col gap-2">
+		<div class="flex flex-col gap-y-2 items-center mb-8 text-center">
+			<p class="text-xl">The room code is</p>
+			<p class="p-2 font-semibold text-2xl tracking-widest rounded-lg bg-neutral-900">
+				{$gameManager.roomCode.toUpperCase()}
+			</p>
+		</div>
+
 		{#each players as player (player.uuid)}
 			{@const isLocal = $gameManager.isLocalPlayer(player)}
 			{@const isPlayerAuth = $gameManager.isPlayerHost(player)}
@@ -213,9 +236,9 @@
 		</button>
 	</div>
 
-	{#if isAuth}
-		<div class="my-14 w-[90%] flex flex-col items-center gap-y-2">
-			<h2 class="mx-auto font-semibold">SETTINGS</h2>
+	<div class="my-14 w-[90%] flex flex-col items-center gap-y-2">
+		<h2 class="mx-auto font-semibold">SETTINGS</h2>
+		{#if isAuth}
 			<div class="w-full flex justify-around items-center">
 				<p>Word list</p>
 				<select
@@ -226,8 +249,23 @@
 					<option value="es_words" class="text-black font-semibold">Español</option>
 				</select>
 			</div>
+		{/if}
+
+		<button
+			class="px-2 py-1 border border-neutral-200 bg-transparent font-semibold rounded-lg"
+			on:click={() => (showQrCode = !showQrCode)}
+		>
+			{!showQrCode ? 'Show' : 'Hide'} QR Code
+		</button>
+
+		<div class={showQrCode ? '' : 'hidden'}>
+			<div class="flex justify-center gap-5 text-3xl">
+				<button on:click={() => increaseQrSize()}>+</button>
+				<button on:click={() => decreaseQrSize()}>-</button>
+			</div>
+			<QRCodeImage text={location.href} displayWidth={qrSize} displayClass="rounded-lg" />
 		</div>
-	{/if}
+	</div>
 
 	<!-- <div class="flex gap-2">
 		<p>Share the room code</p>

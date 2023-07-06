@@ -1,10 +1,11 @@
 import { goto } from '$app/navigation';
 import type { InitialPlayerInfoDto } from '$lib/dtos/PlayerDto';
-import type { LocalController } from '$lib/types/LocalController';
+import type { LocalController, WordListData } from '$lib/types/LocalController';
 import type { Player } from '$lib/types/Player';
 import type { Uuid } from '$lib/types/Uuid';
 import { WordlePoints } from '$lib/types/WordlePoints';
 import { EN_WORDS } from '$lib/words/en_words';
+import { ES_WORDS_COMPLETE_LIST } from '$lib/words/es_word_list';
 import { ES_WORDS } from '$lib/words/es_words';
 import type { WebsocketConnection } from '$lib/ws/websockets';
 import { Emitter } from './Emitter';
@@ -20,9 +21,11 @@ export class GameManager {
 
 	private localPlayer: Player = {} as Player;
 
+
 	constructor(readonly roomCode: string, readonly localController: LocalController, private readonly socket: WebsocketConnection, playerName: string) {
 		this.localPlayer.name = playerName;
 	}
+
 
 	async connectToRoom(): Promise<void> {
 		this.bindSocketEvents();
@@ -44,21 +47,26 @@ export class GameManager {
 		this.prepareSendingWords();
 	}
 
+
 	isLocalHost(): boolean {
 		return this.hostPlayer === this.localPlayer;
 	}
+
 
 	isLocalPlayer(player: Player): boolean {
 		return this.localPlayer === player;
 	}
 
+
 	isPlayerHost(player: Player): boolean {
 		return this.hostPlayer === player;
 	}
 
+
 	getPlayers(): Player[] {
 		return [...this.players];
 	}
+
 
 	when<TNotify extends keyof GameNotifies>(
 		event: TNotify,
@@ -71,11 +79,13 @@ export class GameManager {
 		}
 	}
 
+
 	startGame(wordListId: string): void {
 		this.socket.emit('start_game', {
 			wordListId,
 		});
 	}
+
 
 	prepareSendingWords(): void {
 		this.localController.onSendWord.listen(async ([word]) => {
@@ -93,13 +103,12 @@ export class GameManager {
 				}
 			});
 
-			console.log('GM', result.result);
-
 			this.notifies.onLocalWordResult.broadcast(result.result, word);
 
 			this.localController.toggleInputs(true);
 		});
 	}
+
 
 	private addPlayer(player: InitialPlayerInfoDto): void {
 		const newPlayer: Player = {
@@ -126,6 +135,7 @@ export class GameManager {
 		}
 	}
 
+
 	renameLocalPlayer(newPlayerName: string): void {
 		const uuid = this.localPlayer.uuid;
 
@@ -135,7 +145,10 @@ export class GameManager {
 		}
 
 		this.socket.emit('update_player_name', { newPlayerName, roomCode: this.roomCode, uuid });
+
+		localStorage.setItem('playerName', newPlayerName);
 	}
+
 
 	removePlayer(player: Player): void {
 		this.socket.emit('remove_player', {
@@ -145,13 +158,16 @@ export class GameManager {
 		});
 	}
 
+
 	getLocalPlayer(): Player {
 		return this.localPlayer;
 	}
 
+
 	getLocalController(): LocalController {
 		return this.localController;
 	}
+
 
 	private bindSocketEvents(): void {
 		console.log('Binding GameManager events');
@@ -226,14 +242,16 @@ export class GameManager {
 		});
 
 		this.socket.on('start_prematch', ({ startTime, wordListId }) => {
-			let words: string[];
+			let words: WordListData = {
+				selectableWords: EN_WORDS,
+				validWords: EN_WORDS,
+			};
 
 			switch (wordListId) {
 				case "es_words":
-					words = ES_WORDS;
+					words = { selectableWords: ES_WORDS, validWords: ES_WORDS_COMPLETE_LIST };
 					break;
 				default:
-					words = EN_WORDS;
 					break;
 			}
 
@@ -248,6 +266,12 @@ export class GameManager {
 			}
 
 			this.notifies.gameStarts.broadcast(this.players, startTime);
+		});
+
+		this.socket.on('change_host', ({ hostUuid }) => {
+			this.hostPlayer = this.getPlayers().find((player) => player.uuid === hostUuid)!;
+
+			this.notifies.onHostChange.broadcast(this.hostPlayer);
 		});
 	}
 

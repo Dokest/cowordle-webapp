@@ -16,7 +16,7 @@
 	}
 
 	function goToRoom(): void {
-		goto(`/room/${code}`);
+		goto(`/room/${code.toUpperCase()}`);
 	}
 </script>
 

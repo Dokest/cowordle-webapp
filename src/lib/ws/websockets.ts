@@ -30,11 +30,9 @@ export type WebsocketInEvent = {
 	initial_local_info: {
 		uuid: string,
 	};
-
 	player_connected: {
 		newPlayer: InitialPlayerInfoDto;
 	};
-
 	player_disconnected: {
 		playerUuid: Uuid;
 		reason: string;
@@ -55,6 +53,9 @@ export type WebsocketInEvent = {
 	player_win: {
 		playerUuid: string | null;
 		solution: string;
+	};
+	change_host: {
+		hostUuid: string;
 	};
 };
 
@@ -87,7 +88,7 @@ export class WebsocketConnection {
 
 	constructor() {
 		// FROM client -> WS
-		const domain = env.PUBLIC_WEBSOCKET_EXTERNAL_URL || 'localhost:9000';
+		const domain = env.PUBLIC_WEBSOCKET_EXTERNAL_URL || 'http://localhost:9000';
 
 		console.log(domain);
 
@@ -95,8 +96,6 @@ export class WebsocketConnection {
 			autoConnect: true,
 			withCredentials: true,
 		});
-
-		this.bindEvents();
 	}
 
 	ping(): Promise<void> {
@@ -143,9 +142,5 @@ export class WebsocketConnection {
 
 	getWebsocketSocket(): Socket<any, any> {
 		return this.socket;
-	}
-
-	private bindEvents(): void {
-		this.socket.on('ping', () => this.pingCallbacks.forEach((callback) => callback()));
 	}
 }

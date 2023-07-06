@@ -48,7 +48,7 @@
 
 		ws.init();
 
-		const randomPlayerName = generateRandomName();
+		const randomPlayerName = localStorage.getItem('playerName') || generateRandomName();
 		gameManager.set(new GameManager(roomCode, localPlayer, $ws, randomPlayerName));
 
 		$gameManager.connectToRoom().then(() => {
@@ -56,7 +56,15 @@
 		});
 
 		prepareGame();
+
+		window.addEventListener('popstate', onCloseGame);
 	});
+
+	function onCloseGame(): void {
+		window.removeEventListener('popstate', onCloseGame);
+
+		$ws.disconnect();
+	}
 
 	function prepareGame(): void {
 		$gameManager.when('gameStarts', (_, startTimeMs) => {
@@ -106,7 +114,7 @@
 				const aPoints = aLastResults.reduce((prev, curr) => prev + curr, 0);
 				const bPoints = bLastResults.reduce((prev, curr) => prev + curr, 0);
 
-				return aPoints <= bPoints ? 1 : -1;
+				return aPoints < bPoints ? 1 : -1;
 			});
 		});
 

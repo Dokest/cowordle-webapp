@@ -3,11 +3,7 @@ import { externalRequest, type RequestFormat } from './externalRequest';
 
 
 export async function serverRequest<T = unknown>(url: string, options: RequestInit): Promise<RequestFormat<T>> {
-	console.log('> Before request: ', url);
-
 	const response = await externalRequest(url, options);
-
-	console.log('> After request: ', response);
 
 	if (!response.ok) {
 		return {
@@ -32,7 +28,7 @@ export async function apiRequest<T = unknown>(endpoint: string, options: Request
 
 
 export async function wsServerRequest<T = unknown>(endpoint: string, options: RequestInit): Promise<RequestFormat<T>> {
-	const domain = `${env.PUBLIC_WEBSOCKET_URL || 'localhost:9000'}${endpoint}`;
+	const domain = `${env.PUBLIC_WEBSOCKET_URL || 'http://localhost:9000'}${endpoint}`;
 
 	console.log('QUERY WS -> ', domain);
 

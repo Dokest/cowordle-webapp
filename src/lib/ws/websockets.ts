@@ -2,15 +2,14 @@ import { env } from '$env/dynamic/public';
 import type { InitialPlayerInfoDto } from '$lib/dtos/PlayerDto';
 import type { Uuid } from '$lib/types/Uuid';
 import type { WordlePoints } from '$lib/types/WordlePoints';
-import ioClient, { Socket } from 'socket.io-client';
+import ioClient, { Manager, Socket } from 'socket.io-client';
 
 export type RoomState = 'LOBBY' | 'IN-GAME';
 
 
 export type WebSocketDialogueEvent = {
-	ping: () => void;
 	message: (message: string) => string;
-	setup: (args: { roomCode: string; playerName: string }) => {
+	setup: (args: { roomCode: string; playerName: string, lastPlayerUuid: string | null }) => {
 		players: InitialPlayerInfoDto[];
 		hostPlayer: InitialPlayerInfoDto;
 		localPlayer: InitialPlayerInfoDto;
@@ -57,6 +56,9 @@ export type WebsocketInEvent = {
 	change_host: {
 		hostUuid: string;
 	};
+	disconnect: string;
+	heartbeat_keepalive: undefined;
+	reconnect: undefined;
 };
 
 export type WebsocketOutEvent = {
@@ -77,6 +79,7 @@ export type WebsocketOutEvent = {
 	start_game: {
 		wordListId: string;
 	};
+	heartbeat_keepalive: undefined;
 };
 
 export type EventName<T> = keyof T & string;
@@ -84,22 +87,25 @@ export type EventName<T> = keyof T & string;
 export class WebsocketConnection {
 	private readonly socket: Socket;
 
-	private pingCallbacks: (() => void)[] = [];
-
 	constructor() {
 		// FROM client -> WS
-		const domain = env.PUBLIC_WEBSOCKET_EXTERNAL_URL || 'http://localhost:9000';
-
-		console.log(domain);
+		const domain = env.PUBLIC_WEBSOCKET_EXTERNAL_URL || `http://localhost:${env.PUBLIC_WS_PORT}`;
 
 		this.socket = ioClient(domain, {
 			autoConnect: true,
 			withCredentials: true,
+			reconnection: true,
 		});
+
+		this.socket.on('heartbeat_keepalive', () => { });
 	}
 
-	ping(): Promise<void> {
-		return this.dialogue('ping', undefined);
+	getSocketIo(): Manager {
+		return this.socket.io;
+	}
+
+	ping(): void {
+		this.emit('heartbeat_keepalive', undefined);
 	}
 
 	async dialogue<TEvent extends EventName<WebSocketDialogueEvent>, TEventMethod extends WebSocketDialogueEvent[TEvent]>(

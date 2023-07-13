@@ -29,8 +29,6 @@
 		const lc = $gameManager.localController;
 
 		lc.onFailWord.listen((wordIndex) => {
-			console.log(index, wordIndex);
-
 			const wordDiv = document.getElementById(`word_${index}`);
 
 			if (index === wordIndex && wordDiv && !wordDiv.classList.contains('show-error')) {

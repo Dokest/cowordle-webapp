@@ -5,22 +5,18 @@ import { wsServerRequest } from '../../lib/utils/apiRequest';
 export async function POST(): Promise<Response> {
 	let response: any;
 
-	try {
-		response = await wsServerRequest<{ code: string | null }>(`/create-room`, {
-			method: 'GET',
-		}).catch((error) => {
-			console.error('Error wsServerRequest: [/create-room]', error);
+	response = await wsServerRequest<{ code: string | null }>('/create-room', {
+		method: 'GET',
+	}).catch((error) => {
+		console.error('Error wsServerRequest: [/create-room]', error);
 
-			return {
-				data: {
-					code: null,
-				},
-				error: true,
-			};
-		});
-	} catch (error) {
-		console.log('Caught error in /create', error);
-	}
+		return {
+			data: {
+				code: null,
+			},
+			error: true,
+		};
+	});
 
 	console.log('ROOM READY TO JOIN: ', response);
 

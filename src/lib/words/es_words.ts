@@ -1,7 +1,6 @@
 // Source: https://rafamontoya.blogspot.com/2022/02/historico-de-wordle-en-espanol.html?m=1
 
 export const ES_WORDS = [
-	"SOÑAR",
 	"GRASA",
 	"MANDO",
 	"ABONO",
@@ -44,7 +43,6 @@ export const ES_WORDS = [
 	"MAMBA",
 	"FERIA",
 	"HIELO",
-	"SUEÑO",
 	"SEGUN",
 	"REINA",
 	"CAOBA",
@@ -65,7 +63,6 @@ export const ES_WORDS = [
 	"HECHO",
 	"TROYA",
 	"VISTA",
-	"BAÑAR",
 	"TUNEL",
 	"MIXTO",
 	"VALLE",
@@ -178,7 +175,6 @@ export const ES_WORDS = [
 	"TESON",
 	"SORDO",
 	"NOVIA",
-	"TEÑIR",
 	"QUEDO",
 	"SUFRO",
 	"CISNE",
@@ -190,7 +186,6 @@ export const ES_WORDS = [
 	"ESPIA",
 	"LIMON",
 	"MIXTA",
-	"PAÑAL",
 	"ARDER",
 	"PRIMA",
 	"TENAZ",

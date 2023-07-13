@@ -41,6 +41,7 @@ export class LocalController {
 		this.acceptsInputs = shouldAcceptInput;
 	}
 
+
 	clearInputs(): void {
 		this.currentWordIndex = 0;
 		this.wordTries = this.wordTries.fill('', 0, this.maxTries);

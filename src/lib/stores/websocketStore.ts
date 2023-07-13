@@ -1,32 +1,32 @@
-import { WebsocketConnection } from '$lib/ws/websockets';
-import { writable } from 'svelte/store';
+// import { WebsocketConnection } from '$lib/ws/websockets';
+// import { writable } from 'svelte/store';
 
 
-function handleConnection() {
-	return new WebsocketConnection();
-}
+// function handleConnection() {
+// 	return new WebsocketConnection();
+// }
 
-function createWebSocketStore() {
-	console.log('CREATING SOCKET');
+// function createWebSocketStore() {
+// 	console.log('CREATING SOCKET');
 
-	// const socket = handleConnection();
+// 	// const socket = handleConnection();
 
-	const { subscribe, update } = writable<WebsocketConnection>(undefined);
+// 	const { subscribe, update } = writable<WebsocketConnection>(undefined);
 
-	return {
-		subscribe,
-		init: () => {
-			update((socket) => {
-				// if (socket) {
-				// 	socket.disconnect();
-				// }
-				console.log('> Creating new socket');
+// 	return {
+// 		subscribe,
+// 		init: () => {
+// 			update((socket) => {
+// 				// if (socket) {
+// 				// 	socket.disconnect();
+// 				// }
+// 				console.log('> Creating new socket');
 
 
-				return handleConnection();
-			});
-		},
-	};
-}
+// 				return handleConnection();
+// 			});
+// 		},
+// 	};
+// }
 
-export let ws = createWebSocketStore();
+// export let ws = createWebSocketStore();

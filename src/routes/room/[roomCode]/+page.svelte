@@ -7,21 +7,24 @@
 	import Word from '$lib/components/prefrabs/Word.svelte';
 	import PostMatch from '$lib/components/text/PostMatch.svelte';
 	import { gameManager } from '$lib/stores/gameManagerStore';
-	import { ws } from '$lib/stores/websocketStore';
 	import { LocalController } from '$lib/types/LocalController';
 	import type { Player } from '$lib/types/Player';
 	import { WordlePoints } from '$lib/types/WordlePoints';
 	import { GameManager } from '$lib/utils/GameManager';
 	import { InputManager } from '$lib/utils/InputManager';
 	import { generateRandomName } from '$lib/utils/randomString';
+	import { WebsocketConnection } from '$lib/ws/websockets';
 	import { onMount } from 'svelte';
 	import { flip } from 'svelte/animate';
+	import Disconnected from './disconnected.svelte';
 	import Lobby from './lobby.svelte';
 
 	const roomCode: string = $page.params['roomCode'];
 
 	let roomState: 'loading' | 'lobby' | 'in-game' | 'post-match' = 'loading';
 	let gameHasAlreadyStarted = false;
+	let disconnectedReason: string | undefined = undefined;
+	let hasDisconnected = false;
 
 	if (!roomCode) {
 		goto('/error?e=missing-roomcode');
@@ -46,16 +49,17 @@
 
 	onMount(() => {
 		const localPlayer = new LocalController(new InputManager(), MAX_TRIES, 5);
-
-		ws.init();
+		const ws = new WebsocketConnection();
 
 		const randomPlayerName = localStorage.getItem('playerName') || generateRandomName();
-		gameManager.set(new GameManager(roomCode, localPlayer, $ws, randomPlayerName));
+		gameManager.set(new GameManager(roomCode, localPlayer, ws, randomPlayerName));
 
-		$gameManager.connectToRoom().then((currentRoomState) => {
+		$gameManager.connectToRoom().then(({ roomState: currentRoomState, localPlayer }) => {
 			roomState = 'lobby';
 
 			gameHasAlreadyStarted = currentRoomState === 'IN-GAME';
+
+			localStorage.setItem('lastPlayerUuid', localPlayer.uuid);
 		});
 
 		prepareGame();
@@ -66,7 +70,7 @@
 	function onCloseGame(): void {
 		window.removeEventListener('popstate', onCloseGame);
 
-		$ws.disconnect();
+		$gameManager.disconnect();
 	}
 
 	function prepareGame(): void {
@@ -119,12 +123,28 @@
 				const aPoints = aLastResults.reduce((prev, curr) => prev + curr, 0);
 				const bPoints = bLastResults.reduce((prev, curr) => prev + curr, 0);
 
-				return aPoints < bPoints ? 1 : -1;
+				return aPoints === bPoints ? 0 : aPoints < bPoints ? 1 : -1;
 			});
 		});
 
 		$gameManager.when('onLocalWordResult', (result) => {
 			players = players;
+		});
+
+		$gameManager.when('disconnected', (reason) => {
+			console.log(`Disconnected [Reason: ${reason}]`);
+
+			disconnectedReason = reason;
+
+			setTimeout(() => {
+				if (disconnectedReason) {
+					hasDisconnected = true;
+				}
+			}, 30000);
+		});
+
+		$gameManager.when('reconnect', () => {
+			disconnectedReason = undefined;
 		});
 	}
 
@@ -161,7 +181,18 @@
 </script>
 
 <div class="mt-5 w-[90%] md:w-[50%] mx-auto">
-	{#if roomState === 'loading'}
+	{#if disconnectedReason && !hasDisconnected}
+		<div class="flex flex-col justify-center items-center text-center">
+			<div class="px-3 py-2 my-2 rounded-lg border border-red-500 bg-red-600 bg-opacity-20">
+				<p>There are some problems with the connection...</p>
+				<p>We are trying to reconnect to the match.</p>
+			</div>
+		</div>
+	{/if}
+
+	{#if hasDisconnected}
+		<Disconnected reason={disconnectedReason || ''} />
+	{:else if roomState === 'loading'}
 		<LoadingParty />
 	{:else if roomState === 'lobby'}
 		<Lobby bind:this={lobby} {gameHasAlreadyStarted} />

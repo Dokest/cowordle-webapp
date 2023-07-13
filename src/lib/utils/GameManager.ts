@@ -21,21 +21,31 @@ export class GameManager {
 
 	private localPlayer: Player = {} as Player;
 
+	private isLocalPlayerSendingWord = false;
+
 
 	constructor(readonly roomCode: string, readonly localController: LocalController, private readonly socket: WebsocketConnection, playerName: string) {
 		this.localPlayer.name = playerName;
 	}
 
 
-	async connectToRoom(): Promise<RoomState> {
+	disconnect(): void {
+		this.socket.disconnect();
+	}
+
+
+	async connectToRoom(): Promise<{ roomState: RoomState; localPlayer: Player }> {
 		this.bindSocketEvents();
 
 		const { localPlayer, players, hostPlayer, roomState } = await this.socket.dialogue('setup', {
 			playerName: this.localPlayer.name,
 			roomCode: this.roomCode,
+			lastPlayerUuid: localStorage.getItem('lastPlayerUuid'),
 		});
 
 		players.forEach((player) => {
+			console.log('1', player);
+
 			this.addPlayer(player);
 		});
 
@@ -46,7 +56,19 @@ export class GameManager {
 
 		this.prepareSendingWords();
 
-		return roomState;
+		// Do not allow Socket.IO to close the connection
+		const repeatPing = () => {
+			this.socket.ping();
+
+			setTimeout(repeatPing, 30000);
+		};
+
+		repeatPing();
+
+		return {
+			roomState,
+			localPlayer: this.localPlayer
+		};
 	}
 
 
@@ -91,13 +113,28 @@ export class GameManager {
 
 	prepareSendingWords(): void {
 		this.localController.onSendWord.listen(async ([word]) => {
+			this.isLocalPlayerSendingWord = true;
+
 			this.localController.toggleInputs(false);
 
 			const result = await this.socket.dialogue('validate_word', {
 				word,
 				playerUuid: this.localPlayer.uuid,
 				roomCode: this.roomCode,
+			}).catch((): false => {
+				console.error('Error trying to validate word.');
+
+				this.localController.toggleInputs(true);
+				this.isLocalPlayerSendingWord = false;
+
+				return false;
 			});
+
+			if (!result) {
+				return;
+			}
+
+			this.isLocalPlayerSendingWord = false;
 
 			[...result.result].forEach((letterResult, index) => {
 				if (letterResult === WordlePoints.Exact) {
@@ -113,6 +150,8 @@ export class GameManager {
 
 
 	private addPlayer(player: InitialPlayerInfoDto): void {
+		console.log(player);
+
 		const newPlayer: Player = {
 			name: player.name,
 			uuid: player.uuid as Uuid,
@@ -175,6 +214,8 @@ export class GameManager {
 		console.log('Binding GameManager events');
 
 		this.socket.on('player_connected', ({ newPlayer }) => {
+			console.log(2, newPlayer);
+
 			this.addPlayer(newPlayer);
 
 			this.notifies.playersUpdated.broadcast(this.players);
@@ -194,7 +235,11 @@ export class GameManager {
 
 		this.socket.on('player_disconnected', ({ playerUuid, reason }) => {
 			if (this.localPlayer.uuid === playerUuid) {
-				return goto('/removed');
+				if (reason === 'removed') {
+					goto('/removed');
+				}
+
+				return;
 			}
 
 			this.players = this.players.filter((player) => player.uuid !== playerUuid);
@@ -251,7 +296,7 @@ export class GameManager {
 					break;
 			}
 
-			console.log('USING ', wordListId);
+			console.log('Using ', wordListId);
 
 			this.localController.setWordList(words);
 
@@ -268,6 +313,22 @@ export class GameManager {
 			this.hostPlayer = this.getPlayers().find((player) => player.uuid === hostUuid)!;
 
 			this.notifies.onHostChange.broadcast(this.hostPlayer);
+		});
+
+		this.socket.on('disconnect', (reason: string) => {
+			this.notifies.disconnected.broadcast(reason || 'unknown');
+		});
+
+		this.socket.getSocketIo().on('reconnect', (args) => {
+			console.log('Reconnect', args);
+
+			if (this.isLocalPlayerSendingWord) {
+				console.log('Reconnect: Toggling inputs back on!');
+
+				this.localController.toggleInputs(true);
+			}
+
+			this.notifies.reconnect.broadcast();
 		});
 	}
 

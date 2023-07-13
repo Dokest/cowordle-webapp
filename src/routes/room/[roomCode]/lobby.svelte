@@ -17,7 +17,7 @@
 	let nameInput: HTMLInputElement;
 	let roomCodeCopied = false;
 	let countdown: number | null = null;
-	let wordListId: string = 'en_words';
+	let wordListId: string = 'es_words';
 	let showQrCode = false;
 	let qrSize = 200;
 
@@ -250,22 +250,22 @@
 	</div>
 
 	<div class="my-14 w-[90%] flex flex-col items-center gap-y-2">
-		<h2 class="mx-auto font-semibold">SETTINGS</h2>
 		{#if isAuth}
+			<h2 class="mx-auto font-semibold">SETTINGS</h2>
 			<div class="w-full flex justify-around items-center">
 				<p>Word list</p>
 				<select
 					bind:value={wordListId}
 					class="px-2 py-1 border border-neutral-200 bg-transparent font-semibold rounded-lg focus:rounded-b-none transition-[border-radius]"
 				>
-					<option value="en_words" class="text-black font-semibold">English</option>
 					<option value="es_words" class="text-black font-semibold">Español</option>
+					<option value="en_words" class="text-black font-semibold">English</option>
 				</select>
 			</div>
 		{/if}
 
 		<button
-			class="px-2 py-1 border border-neutral-200 bg-transparent font-semibold rounded-lg"
+			class="px-2 py-1 mt-2 border border-neutral-200 bg-transparent font-semibold rounded-lg"
 			on:click={() => (showQrCode = !showQrCode)}
 		>
 			{!showQrCode ? 'Show' : 'Hide'} QR Code

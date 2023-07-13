@@ -28,13 +28,9 @@ export async function apiRequest<T = unknown>(endpoint: string, options: Request
 
 
 export async function wsServerRequest<T = unknown>(endpoint: string, options: RequestInit): Promise<RequestFormat<T>> {
-	const domain = `${env.PUBLIC_WEBSOCKET_URL || 'http://localhost:9000'}${endpoint}`;
+	const domain = `${env.PUBLIC_WEBSOCKET_URL || `http://localhost:${env.PUBLIC_WS_PORT}`}${endpoint}`;
 
 	console.log('QUERY WS -> ', domain);
 
-	return serverRequest(domain, options)
-		.catch((e) => {
-			console.log('Error on server request', e);
-			return e;
-		});
+	return serverRequest(domain, options);
 }

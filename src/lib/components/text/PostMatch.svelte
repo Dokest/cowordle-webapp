@@ -48,7 +48,7 @@
 	{/if}
 
 	<div class="flex flex-col items-center gap-2 m-4">
-		<p>The solution was</p>
+		<p>The solution is</p>
 		<Word word={solution} length={6} results={accumulatedKnowledge} showOnlyColors={false} />
 	</div>
 </div>

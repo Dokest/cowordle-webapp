@@ -2,10 +2,10 @@
 	import Keyboard from '$lib/components/boards/Keyboard.svelte';
 	import WordleBoard from '$lib/components/boards/WordleBoard.svelte';
 	import { gameManager } from '$lib/stores/gameManagerStore';
-	import { ws } from '$lib/stores/websocketStore';
 	import { LocalController } from '$lib/types/LocalController';
 	import { GameManager } from '$lib/utils/GameManager';
 	import { InputManager } from '$lib/utils/InputManager';
+	import { WebsocketConnection } from '$lib/ws/websockets';
 	import { onMount } from 'svelte';
 
 	const MAX_TRIES = 6;
@@ -15,15 +15,13 @@
 	tries.length = MAX_TRIES;
 	tries = tries.fill('', 0, MAX_TRIES);
 
-	let currentTry = 0;
-
-	const spectatorBoard = [...tries];
-
 	onMount(() => {
+		const ws = new WebsocketConnection();
+
 		const newGameManager = new GameManager(
 			'AAAA',
 			new LocalController(new InputManager(), MAX_TRIES, WORD_LENGTH),
-			$ws,
+			ws,
 			'test'
 		);
 
